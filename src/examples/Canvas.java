@@ -106,7 +106,7 @@ public class Canvas extends JComponent {
                 }
             });
         // start animation
-        myGame = new Game1(myFrame);
+        myGame = new Game1(this);
         timer.start();
     }
 

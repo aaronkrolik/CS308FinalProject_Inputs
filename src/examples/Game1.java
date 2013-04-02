@@ -30,15 +30,16 @@ public class Game1 {
 	private boolean wasMouseDown = false;
 	private boolean popup = true;
 	Input input1;
-	JFrame myFrame;
+	//JFrame myFrame;
+	Canvas myCanvas;
 	private ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 
-	public Game1(JFrame frame){
-		myFrame = frame;
+	public Game1(Canvas canvas){
+		myCanvas = canvas;
 		jones = new Player(new Pixmap("runningJones.png"),new Pixmap("flyingJones.png"));
 		you = new Player(new Pixmap("runningYou.png"),new Pixmap("flyingYou.png"));
 		updateWindowSize();
-		input1 = new Input("examples/Game1Mapping", frame);
+		input1 = new Input("examples/Game1Mapping", myCanvas);
 		input1.setBehavior("jump", new Command() {
 			@Override
 			public void execute(ActionObject actObj) {
@@ -84,7 +85,7 @@ public class Game1 {
 	 * Stores the window size Dimension in a convenient local variable
 	 */
 	private void updateWindowSize() {
-		windowSize = myFrame.getSize();
+		windowSize = myCanvas.getSize();
 	}
 
 	/**

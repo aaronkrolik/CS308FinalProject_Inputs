@@ -9,6 +9,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 public class Input {
@@ -16,11 +17,11 @@ public class Input {
 	
 	HashMap<String, Command> behaviors = new HashMap<String, Command>();
 	
-	public Input(String resourcePath, JFrame frame) {
+	public Input(String resourcePath, JComponent component) {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
 		//Hardcoded resource file for now
 	
-		frame.addKeyListener(new KeyAdapter() {
+		component.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed (KeyEvent e) {
             	if(e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -54,13 +55,13 @@ public class Input {
             }
         });
 
-		frame.addMouseMotionListener(new MouseMotionAdapter() {
+		component.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved (MouseEvent e) {
             }
         });
         
-        frame.addMouseListener(new MouseListener() {
+		component.addMouseListener(new MouseListener() {
         	@Override
 			public void mouseClicked(MouseEvent arg0) {}
 
