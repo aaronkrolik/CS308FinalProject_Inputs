@@ -20,7 +20,8 @@ public class Input {
 	public Input(String resourcePath, JComponent component) {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
 		//Hardcoded resource file for now
-	
+		
+		//RESOURCES.containsKey(arg0)
 		component.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed (KeyEvent e) {
@@ -74,7 +75,9 @@ public class Input {
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				if(behaviors.containsKey("continue")) {
-					behaviors.get("continue").execute(null);
+					ActionObject actObj = new ActionObject();
+					//actObj.addData("xPos",arg0.getX());
+					behaviors.get("continue").execute(actObj);
 				}
 			}
 
