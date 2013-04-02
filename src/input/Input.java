@@ -19,42 +19,55 @@ public class Input {
 	
 	public Input(String resourcePath, JComponent component) {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
-		//Hardcoded resource file for now
 		
-		//RESOURCES.containsKey(arg0)
-		component.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed (KeyEvent e) {
-            	if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-            		if(behaviors.containsKey("jump")) {
-    					behaviors.get("jump").execute(null);
-    				}
-            	}
-            	if(e.getKeyCode() == KeyEvent.VK_G) {
-            		if(behaviors.containsKey("cheat")) {
-    					behaviors.get("cheat").execute(null);
-    				}
-            	}
-            	if(e.getKeyCode() == KeyEvent.VK_F) {
-            		if(behaviors.containsKey("anticheat")) {
-    					behaviors.get("anticheat").execute(null);
-    				}
-            	}
-            }
-            @Override
-            public void keyReleased (KeyEvent e) {
-            	if(e.getKeyCode() == KeyEvent.VK_G) {
-            		if(behaviors.containsKey("stopcheat")) {
-    					behaviors.get("stopcheat").execute(null);
-    				}
-            	}
-            	if(e.getKeyCode() == KeyEvent.VK_F) {
-            		if(behaviors.containsKey("stopanticheat")) {
-    					behaviors.get("stopanticheat").execute(null);
-    				}
-            	}
-            }
-        });
+		//go through resources
+		//for each:
+		//check if keyboard is referenced
+		
+		
+		KeyboardListeners kl = new KeyboardListeners(component);
+		
+		for(String key : RESOURCES.keySet()) {
+			String[] actionIdentifiers = key.split("_");
+			if(actionIdentifiers[0].equals(kl.name) && RESOURCES.containsKey(key)) {
+				kl.setCommand(actionIdentifiers, behaviors.get(RESOURCES.getObject(key)));
+			}
+		}
+		
+		//Hardcoded resource file for now
+//		component.addKeyListener(new KeyAdapter() {
+//            @Override
+//            public void keyPressed (KeyEvent e) {
+//            	if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+//            		if(behaviors.containsKey("jump")) {
+//    					behaviors.get("jump").execute(null);
+//    				}
+//            	}
+//            	if(e.getKeyCode() == KeyEvent.VK_G) {
+//            		if(behaviors.containsKey("cheat")) {
+//    					behaviors.get("cheat").execute(null);
+//    				}
+//            	}
+//            	if(e.getKeyCode() == KeyEvent.VK_F) {
+//            		if(behaviors.containsKey("anticheat")) {
+//    					behaviors.get("anticheat").execute(null);
+//    				}
+//            	}
+//            }
+//            @Override
+//            public void keyReleased (KeyEvent e) {
+//            	if(e.getKeyCode() == KeyEvent.VK_G) {
+//            		if(behaviors.containsKey("stopcheat")) {
+//    					behaviors.get("stopcheat").execute(null);
+//    				}
+//            	}
+//            	if(e.getKeyCode() == KeyEvent.VK_F) {
+//            		if(behaviors.containsKey("stopanticheat")) {
+//    					behaviors.get("stopanticheat").execute(null);
+//    				}
+//            	}
+//            }
+//        });
 
 		component.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
