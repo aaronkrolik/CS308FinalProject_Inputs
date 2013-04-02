@@ -201,7 +201,7 @@ public class Game1 {
 		pen.setColor(Color.red);
 		pen.fillRect(130 + (int) (TRACK_LENGTH - you.getPosition()), 205, 300, 200);
 		pen.setColor(Color.black);
-		pen.drawString("HOME", 130 + (int)(TRACK_LENGTH - you.getPosition()) + 100, 250);
+		pen.drawString("STORE", 130 + (int)(TRACK_LENGTH - you.getPosition()) + 100, 250);
 
 		//Draws The Houses
 		for (int i = 0; i < 10; i++) {

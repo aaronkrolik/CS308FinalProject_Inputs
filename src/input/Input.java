@@ -18,8 +18,8 @@ public class Input {
 	public Input(String resourcePath, JComponent component) {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
 		
-		inputDevices.add(new KeyboardListener(component));
-		
+		inputDevices.add(new KeyboardListener(component,this));
+
 		component.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved (MouseEvent e) {
@@ -68,6 +68,11 @@ public class Input {
 	public void setBehavior(String behaviorName, Command behavior) {
 		behaviors.put(behaviorName, behavior);
 		updateDeviceCommands(behaviorName);
+	}
+	
+	public void executeCommand(String key, ActionObject object){
+		if(behaviors.containsKey(key)) 
+			behaviors.get(key).execute(object);
 	}
 	
 }
