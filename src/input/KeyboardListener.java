@@ -7,7 +7,7 @@ import java.util.HashMap;
 import javax.swing.JComponent;
 
 public class KeyboardListener extends InputDevice{
-	JComponent myFrame;
+	JComponent myComponent;
 	public final String myDevice = "KEYBOARD";
 	
 	HashMap<Integer, Command> keyPressedCommands = new HashMap<Integer, Command>();
@@ -15,7 +15,7 @@ public class KeyboardListener extends InputDevice{
 	
 	public KeyboardListener(JComponent component){
 		super("Keyboard");
-		myFrame = component;
+		myComponent = component;
 		initialize();
 	}
 	
@@ -44,7 +44,7 @@ public class KeyboardListener extends InputDevice{
 	}
 	
 	private void initialize(){
-		myFrame.addKeyListener(new KeyListener() {
+		myComponent.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e){
 				if(keyPressedCommands.containsKey(e.getKeyCode())) {
 					keyPressedCommands.get(e.getKeyCode()).execute(new ActionObject());

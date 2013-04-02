@@ -19,42 +19,7 @@ public class Input {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
 		
 		inputDevices.add(new KeyboardListener(component));
-				
-		//Hardcoded resource file for now
-//		component.addKeyListener(new KeyAdapter() {
-//            @Override
-//            public void keyPressed (KeyEvent e) {
-//            	if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-//            		if(behaviors.containsKey("jump")) {
-//    					behaviors.get("jump").execute(null);
-//    				}
-//            	}
-//            	if(e.getKeyCode() == KeyEvent.VK_G) {
-//            		if(behaviors.containsKey("cheat")) {
-//    					behaviors.get("cheat").execute(null);
-//    				}
-//            	}
-//            	if(e.getKeyCode() == KeyEvent.VK_F) {
-//            		if(behaviors.containsKey("anticheat")) {
-//    					behaviors.get("anticheat").execute(null);
-//    				}
-//            	}
-//            }
-//            @Override
-//            public void keyReleased (KeyEvent e) {
-//            	if(e.getKeyCode() == KeyEvent.VK_G) {
-//            		if(behaviors.containsKey("stopcheat")) {
-//    					behaviors.get("stopcheat").execute(null);
-//    				}
-//            	}
-//            	if(e.getKeyCode() == KeyEvent.VK_F) {
-//            		if(behaviors.containsKey("stopanticheat")) {
-//    					behaviors.get("stopanticheat").execute(null);
-//    				}
-//            	}
-//            }
-//        });
-
+		
 		component.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved (MouseEvent e) {
@@ -90,8 +55,8 @@ public class Input {
 		for(String key : RESOURCES.keySet()) {
 			String value = RESOURCES.getString(key);
 			if(value.equals(behaviorName)) {
+				String[] actionIdentifiers = key.split("_");
 				for(InputDevice inDev : inputDevices) {
-					String[] actionIdentifiers = key.split("_");
 					if(actionIdentifiers[0].equals(inDev.getName()) && behaviors.containsKey(value)) {
 						inDev.setCommand(actionIdentifiers, behaviors.get(RESOURCES.getString(key)));
 					}
