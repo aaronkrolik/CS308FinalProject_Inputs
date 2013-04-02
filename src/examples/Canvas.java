@@ -11,6 +11,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.Timer;
 
 import input.Command;
@@ -44,11 +45,13 @@ public class Canvas extends JComponent {
     private Point myLastMousePosition;
     boolean mouseDown = false;
     int cumulativeTime = 0;
+    JFrame myFrame;
     
     /**
      * Create a panel so that it knows its size
      */
-    public Canvas (Dimension size) {
+    public Canvas (Dimension size, JFrame frame) {
+    	myFrame = frame;
         setPreferredSize(size);
         setSize(size);
         setFocusable(true);
@@ -103,7 +106,7 @@ public class Canvas extends JComponent {
                 }
             });
         // start animation
-        myGame = new Game1(this);
+        myGame = new Game1(myFrame);
         timer.start();
     }
 

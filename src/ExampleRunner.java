@@ -10,8 +10,8 @@ public class ExampleRunner {
     public static final String TITLE = "Race!";
 
     public static void main(String[] args) {
-        Canvas display = new Canvas(SIZE);
         JFrame frame = new JFrame(TITLE);
+        Canvas display = new Canvas(SIZE, frame);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(display, BorderLayout.CENTER);
         frame.setMinimumSize(new Dimension(800,650));

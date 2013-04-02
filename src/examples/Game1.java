@@ -11,6 +11,8 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
+
 public class Game1 {
 	private static final int TRACK_LENGTH = 20000;
 	public static final int CHEAT_CODE = KeyEvent.VK_G;
@@ -20,7 +22,6 @@ public class Game1 {
 	public static final int PORTABLE_DEVICE = 2;
 	public static final int CAR = 3;
 	public static final int TOTAL = 4;
-	private Canvas myCanvas;
 	private Player jones;
 	private Player you;
 	private double time;
@@ -28,18 +29,52 @@ public class Game1 {
 	private int oldKey = 0;
 	private boolean wasMouseDown = false;
 	private boolean popup = true;
+	Input input1;
+	JFrame myFrame;
 	private ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 
-	public Game1(Canvas canvas){
-		myCanvas = canvas;
-		jones = new Player(new Pixmap("runningJones.png"),new Pixmap("flyingJones.png"), this);
-		you = new Player(new Pixmap("runningYou.png"),new Pixmap("flyingYou.png"), this);
+	public Game1(JFrame frame){
+		myFrame = frame;
+		jones = new Player(new Pixmap("runningJones.png"),new Pixmap("flyingJones.png"));
+		you = new Player(new Pixmap("runningYou.png"),new Pixmap("flyingYou.png"));
 		updateWindowSize();
-		Input input1 = new Input("examples/Game1Mapping");
+		input1 = new Input("examples/Game1Mapping", frame);
 		input1.setBehavior("jump", new Command() {
 			@Override
 			public void execute(ActionObject actObj) {
-				you.jump(time);
+				if (you.getTimeSinceJump(time) > 1 && you.getBottom() > 448) {
+					you.jump(time);
+				}
+			}
+		});
+		input1.setBehavior("cheat", new Command() {
+			@Override
+			public void execute(ActionObject actObj) {
+				you.setCheating(true);
+			}
+		});
+		input1.setBehavior("anticheat", new Command() {
+			@Override
+			public void execute(ActionObject actObj) {
+				you.setAntiCheating(true);
+			}
+		});
+		input1.setBehavior("stopcheat", new Command() {
+			@Override
+			public void execute(ActionObject actObj) {
+				you.setCheating(false);
+			}
+		});
+		input1.setBehavior("stopanticheat", new Command() {
+			@Override
+			public void execute(ActionObject actObj) {
+				you.setAntiCheating(false);
+			}
+		});
+		input1.setBehavior("continue", new Command() {
+			@Override
+			public void execute(ActionObject actObj) {
+				popup = false;
 			}
 		});
 		setUpObstacles();
@@ -49,7 +84,7 @@ public class Game1 {
 	 * Stores the window size Dimension in a convenient local variable
 	 */
 	private void updateWindowSize() {
-		windowSize = myCanvas.getSize();
+		windowSize = myFrame.getSize();
 	}
 
 	/**
@@ -74,24 +109,10 @@ public class Game1 {
     public void update (double elapsedTime) {
     	updateWindowSize();
 		incrementTime(elapsedTime);
-		if (popup) {
-			if (myCanvas.getMouseDown() && !wasMouseDown && time > 3) {
-				popup = false;
-			}
-			wasMouseDown = myCanvas.getMouseDown();
+		if (popup)
 			return;
-		}
-		you.update(myCanvas, time, you.getPosition());
-		jones.update(myCanvas, time, you.getPosition());
-
-		if (myCanvas.getLastKeyPressed() == ANTI_CHEAT_CODE) {
-			you.setSpeed(0);
-		}
-
-		if (myCanvas.getLastKeyPressed() == 32
-				&& you.getTimeSinceJump(time) > 1 && you.getBottom() > 448) {
-			you.jump(time);
-		}
+		you.update(time, you.getPosition());
+		jones.update(time, you.getPosition());
 
 		for (Obstacle i : obstacles) {
 			if (i.getLeft() > jones.getRight()
@@ -112,11 +133,9 @@ public class Game1 {
 
 		if (you.getPosition() < TRACK_LENGTH
 				&& jones.getPosition() < TRACK_LENGTH) {
-			you.incrementPosition(myCanvas.getLastKeyPressed());
-			jones.incrementPosition(myCanvas.getLastKeyPressed());
+			you.incrementPosition();
+			jones.incrementPosition();
 		}
-		oldKey = myCanvas.getLastKeyPressed();
-		wasMouseDown = myCanvas.getMouseDown();
     }
     
     /**
@@ -128,6 +147,9 @@ public class Game1 {
 		you.paint(pen);
 		paintObstacles(pen);
 		paintProgressIndicator(pen);
+		if (popup) {
+			paintPopup(pen);
+		}
     }
     
     /**
@@ -200,10 +222,6 @@ public class Game1 {
 		} else {
 			pen.drawString("Speed: " + (int)Math.floor(you.getSpeed()/5) + " MPH", //tries to be a more realistic sprint speed
 					70, 100);
-		}
-				
-		if (popup) {
-			paintPopup(pen);
 		}
 	}
 	

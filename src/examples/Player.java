@@ -15,15 +15,16 @@ public class Player extends Sprite {
 	private static final int GRAVITY = -280;
 	private static final int JUMP_VELOCITY = 330;
 	private final int MAX_SPEED = 30;
-	private Game1 program;
 	private Pixmap runningImage;
 	private Pixmap flyingImage;
+	private boolean isCheating = false;
+	private boolean isAntiCheating = false;
 
 	private double minigamePosition = 0;
 	private double minigameSpeed = 0;
 	private double minigameTimeOfJump = -100;
 
-	public Player(Pixmap firstImage, Pixmap secondImage, Game1 Program) {
+	public Player(Pixmap firstImage, Pixmap secondImage) {
 		super(firstImage, new Location(150, 400), new Dimension(60, 100));
 		runningImage = firstImage;
 		flyingImage = secondImage;
@@ -36,11 +37,14 @@ public class Player extends Sprite {
 		}
 	}
 
-	public void incrementPosition(int lastKey) {
+	public void incrementPosition() {
 		minigamePosition += minigameSpeed;
 
-		if ((lastKey == Game1.CHEAT_CODE || getBottom() > 440) && minigameSpeed < MAX_SPEED) {
+		if ((isCheating || getBottom() > 440) && minigameSpeed < MAX_SPEED) {
 			minigameSpeed += 1;
+		}
+		if(isAntiCheating) {
+			minigameSpeed = 0;
 		}
 	}
 
@@ -59,10 +63,20 @@ public class Player extends Sprite {
 		minigameSpeed = 0;
 		minigameTimeOfJump = -100;
 	}
+	
+	public void setCheating(boolean isCheating) {
+		this.isCheating = isCheating;
+		
+	}
 
-	public void update(Canvas myCanvas, double time, double cameraPosition) {
+	public void setAntiCheating(boolean isAntiCheating) {
+		this.isAntiCheating = isAntiCheating;
+		
+	}
+
+	public void update(double time, double cameraPosition) {
 		double jumpTime = time - minigameTimeOfJump;
-		if (myCanvas.getLastKeyPressed() == Game1.CHEAT_CODE) {
+		if (isCheating) {
 			setView(flyingImage);
 			setSize(50, 100);
 			setCenter(150 + (int) (minigamePosition - cameraPosition), 200);
