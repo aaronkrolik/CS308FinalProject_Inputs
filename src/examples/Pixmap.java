@@ -46,7 +46,7 @@ public class Pixmap {
      */
     public void setImage (String fileName) {
     	try {
-			myImage = ImageIO.read(new File("src/images/" + fileName));
+			myImage = ImageIO.read(new File("src/examples/" + fileName));
 		} catch (IOException e) {}
         myFileName = fileName;
     }
