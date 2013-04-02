@@ -1,39 +1,25 @@
 package input;
 
-import java.awt.Point;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 
 public class Input {
 	private final ResourceBundle RESOURCES;
 	
 	HashMap<String, Command> behaviors = new HashMap<String, Command>();
+	ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>();
 	
 	public Input(String resourcePath, JComponent component) {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
 		
-		//go through resources
-		//for each:
-		//check if keyboard is referenced
-		
-		
-		KeyboardListeners kl = new KeyboardListeners(component);
-		
-		for(String key : RESOURCES.keySet()) {
-			String[] actionIdentifiers = key.split("_");
-			if(actionIdentifiers[0].equals(kl.name) && RESOURCES.containsKey(key)) {
-				kl.setCommand(actionIdentifiers, behaviors.get(RESOURCES.getObject(key)));
-			}
-		}
-		
+		inputDevices.add(new KeyboardListener(component));
+				
 		//Hardcoded resource file for now
 //		component.addKeyListener(new KeyAdapter() {
 //            @Override
@@ -100,8 +86,23 @@ public class Input {
         });
 	}
 	
+	public void updateDeviceCommands(String behaviorName) {
+		for(String key : RESOURCES.keySet()) {
+			String value = RESOURCES.getString(key);
+			if(value.equals(behaviorName)) {
+				for(InputDevice inDev : inputDevices) {
+					String[] actionIdentifiers = key.split("_");
+					if(actionIdentifiers[0].equals(inDev.getName()) && behaviors.containsKey(value)) {
+						inDev.setCommand(actionIdentifiers, behaviors.get(RESOURCES.getString(key)));
+					}
+				}
+			}
+		}
+	}
+	
 	public void setBehavior(String behaviorName, Command behavior) {
 		behaviors.put(behaviorName, behavior);
+		updateDeviceCommands(behaviorName);
 	}
 	
 }

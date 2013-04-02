@@ -6,15 +6,15 @@ import java.util.HashMap;
 
 import javax.swing.JComponent;
 
-public class KeyboardListeners{
+public class KeyboardListener extends InputDevice{
 	JComponent myFrame;
 	public final String myDevice = "KEYBOARD";
-	public final String name = "Keyboard";
 	
 	HashMap<Integer, Command> keyPressedCommands = new HashMap<Integer, Command>();
 	HashMap<Integer, Command> keyReleasedCommands = new HashMap<Integer, Command>();
 	
-	public KeyboardListeners(JComponent component){
+	public KeyboardListener(JComponent component){
+		super("Keyboard");
 		myFrame = component;
 		initialize();
 	}
@@ -26,6 +26,7 @@ public class KeyboardListeners{
 		return null;
 	}
 	
+	@Override
 	public void setCommand(String[] actionIdentifiers, Command command) {
 		if(actionIdentifiers[2].equals("KeyDown")) {
 			if(actionIdentifiers[1].length() == 1) {
@@ -62,9 +63,6 @@ public class KeyboardListeners{
 			@Override
 			public void keyTyped(KeyEvent e) {				
 			}
-			
 		});
-		
 	}
-	
 }
