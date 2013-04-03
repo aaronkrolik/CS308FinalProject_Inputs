@@ -4,12 +4,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JComponent;
 
-public class KeyboardListener extends InputDevice{
+public class KeyboardModule extends InputDevice{
 	JComponent myComponent;
 	private Input myInput;
 	public final String myDevice = "KEYBOARD";
 	
-	public KeyboardListener(JComponent component, Input input){
+	public KeyboardModule(JComponent component, Input input){
 		super("Keyboard");
 		myComponent = component;
 		myInput = input;
@@ -18,8 +18,8 @@ public class KeyboardListener extends InputDevice{
 	
 	private ActionObject getObject(KeyEvent e){
 		ActionObject actObj = new ActionObject();
-		actObj.myCallerDevice = myDevice;
-		actObj.myData = e.paramString();
+		actObj.setData("My Caller Device", myDevice);
+		actObj.setData("My Data", e.paramString());
 		return actObj;
 	}
 	
@@ -28,13 +28,13 @@ public class KeyboardListener extends InputDevice{
 			@Override
 			public void keyPressed(KeyEvent e){
 				String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
-				myInput.actionNotify("Keyboard_" + keyName + "_KeyDown", getObject(e));
+				myInput.actionNotification("Keyboard_" + keyName + "_KeyDown", getObject(e));
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
 				String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
-				myInput.actionNotify("Keyboard_" + keyName + "_KeyUp", getObject(e));
+				myInput.actionNotification("Keyboard_" + keyName + "_KeyUp", getObject(e));
 			}
 
 			@Override
