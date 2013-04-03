@@ -8,76 +8,56 @@ import javax.swing.JComponent;
 
 public class KeyboardListener extends InputDevice{
 	JComponent myComponent;
-	private Input input;
-	private KeyboardInitialler initialler;
+	private Input myInput;
+	//private KeyboardInitialler initialler;
 	public final String myDevice = "KEYBOARD";
 	
-	//HashMap<Integer, Command> keyPressedCommands = new HashMap<Integer, Command>();
-	//HashMap<Integer, Command> keyReleasedCommands = new HashMap<Integer, Command>();
-	
-	public KeyboardListener(JComponent component,Input i){
+	public KeyboardListener(JComponent component, Input input){
 		super("Keyboard");
 		myComponent = component;
-		input = i;
-		initialler = new KeyboardInitialler();
+		myInput = input;
+		//initialler = new KeyboardInitialler();
 		initialize();
 	}
 	
-	public ActionObject send(KeyEvent e) {
-		ActionObject ret = new ActionObject();
-		ret.myCallerDevice = myDevice;
-		ret.myData = e.paramString();
-		return null;
-	}
-	
 	private ActionObject getObject(KeyEvent e){
-		ActionObject ret = new ActionObject();
-		ret.myCallerDevice = myDevice;
-		ret.myData = e.paramString();
-		return ret;
+		ActionObject actObj = new ActionObject();
+		actObj.myCallerDevice = myDevice;
+		actObj.myData = e.paramString();
+		return actObj;
 	}
-	
-//	@Override
-//	public void setCommand(String[] actionIdentifiers, Command command) {
-//		if(actionIdentifiers[2].equals("KeyDown")) {
-//			if(actionIdentifiers[1].length() == 1) {
-//				keyPressedCommands.put((int)(actionIdentifiers[1].charAt(0)), command);
-//			} else if(actionIdentifiers[1].equals("Spacebar")) {
-//				keyPressedCommands.put(KeyEvent.VK_SPACE, command);
-//			}
-//		} else if(actionIdentifiers[2].equals("KeyUp")) {
-//			if(actionIdentifiers[1].length() == 1) {
-//				keyReleasedCommands.put((int)(actionIdentifiers[1].charAt(0)), command);
-//			} else if(actionIdentifiers[1].equals("Spacebar")) {
-//				keyPressedCommands.put(KeyEvent.VK_SPACE, command);
-//			}
-//		}
-//	}
 	
 	private void initialize(){
 		myComponent.addKeyListener(new KeyListener() {
+			@Override
 			public void keyPressed(KeyEvent e){
-//				if(keyPressedCommands.containsKey(e.getKeyCode())) {
-//					keyPressedCommands.get(e.getKeyCode()).execute(new ActionObject());
-//				}
-//				send(e);
-				String key = initialler.getKeyPressed(e.getKeyCode());
-				input.executeCommand(key, getObject(e));
+				String action = getKeyPressed(e.getKeyCode());
+				myInput.actionNotify(action, getObject(e));
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-//				if(keyReleasedCommands.containsKey(e.getKeyCode())) {
-//					keyReleasedCommands.get(e.getKeyCode()).execute(new ActionObject());
-//				}
-//				send(e);
-				String key = initialler.getKeyReleased(e.getKeyCode());
-				input.executeCommand(key, getObject(e));
+				String action = getKeyReleased(e.getKeyCode());
+				myInput.actionNotify(action, getObject(e));
 			}
 
 			@Override
 			public void keyTyped(KeyEvent e) {				
 			}
 		});
+	}
+	
+	private String getKeyPressed(int key){
+		String thirdIdentifier = "" + ((char)key);
+		if(key == KeyEvent.VK_SPACE)
+			thirdIdentifier = "Spacebar";
+		return "Keyboard_" + thirdIdentifier + "_KeyDown";
+	}
+	
+	private String getKeyReleased(int key){
+		String thirdIdentifier = "" + (char)key;
+		if(key == KeyEvent.VK_SPACE)
+			thirdIdentifier = "Spacebar";
+		return "Keyboard_" + thirdIdentifier + "_KeyUp";
 	}
 }

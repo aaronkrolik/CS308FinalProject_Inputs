@@ -147,11 +147,17 @@ public class KeyboardInitialler {
 	}
 	
 	public String getKeyPressed(int key){
-		return keyDownMap.get(key);
+		String thirdIdentifier = "" + ((char)key);
+		if(key == KeyEvent.VK_SPACE)
+			thirdIdentifier = "Spacebar";
+		return "Keyboard_" + thirdIdentifier + "_KeyDown";
 	}
 	
 	public String getKeyReleased(int key){
-		return keyUpMap.get(key);
+		String thirdIdentifier = "" + (char)key;
+		if(key == KeyEvent.VK_SPACE)
+			thirdIdentifier = "Spacebar";
+		return "Keyboard_" + thirdIdentifier + "_KeyUp";
 	}
 	
 }

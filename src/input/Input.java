@@ -51,28 +51,14 @@ public class Input {
         });
 	}
 	
-	public void updateDeviceCommands(String behaviorName) {
-		for(String key : RESOURCES.keySet()) {
-			String value = RESOURCES.getString(key);
-			if(value.equals(behaviorName)) {
-				String[] actionIdentifiers = key.split("_");
-				for(InputDevice inDev : inputDevices) {
-					if(actionIdentifiers[0].equals(inDev.getName()) && behaviors.containsKey(value)) {
-						inDev.setCommand(actionIdentifiers, behaviors.get(RESOURCES.getString(key)));
-					}
-				}
-			}
-		}
-	}
-	
 	public void setBehavior(String behaviorName, Command behavior) {
 		behaviors.put(behaviorName, behavior);
-		updateDeviceCommands(behaviorName);
 	}
 	
-	public void executeCommand(String key, ActionObject object){
-		if(behaviors.containsKey(key)) 
-			behaviors.get(key).execute(object);
+	public void actionNotify(String action, ActionObject object){
+		if(RESOURCES.containsKey(action) && behaviors.containsKey(RESOURCES.getString(action))) {
+			behaviors.get(RESOURCES.getString(action)).execute(object);
+		}
 	}
 	
 }
