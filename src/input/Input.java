@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 
 import examples.Player;
 
@@ -38,7 +37,6 @@ public class Input {
 				mapping.put(((InputTarget) annotation).name(), method);
 			}
 		}
-		//in.initListener(mapping);
 		
 		ActionObject x = new ActionObject();
 		x.myName = "blah";
@@ -55,6 +53,7 @@ public class Input {
 			e.printStackTrace();
 		}
 	}
+	ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>();
 	
 	public Input(String resourcePath, JComponent component) {
 		
@@ -62,75 +61,17 @@ public class Input {
 		
 		
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
-		
-		KeyboardListeners foo = new KeyboardListeners(component);
-		//Hardcoded resource file for now
-	
-//		component.addKeyListener(new KeyAdapter() {
-//            @Override
-//            public void keyPressed (KeyEvent e) {
-//            	if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-//            		if(behaviors.containsKey("jump")) {
-//    					behaviors.get("jump").execute(null);
-//    				}
-//            	}
-//            	if(e.getKeyCode() == KeyEvent.VK_G) {
-//            		if(behaviors.containsKey("cheat")) {
-//    					behaviors.get("cheat").execute(null);
-//    				}
-//            	}
-//            	if(e.getKeyCode() == KeyEvent.VK_F) {
-//            		if(behaviors.containsKey("anticheat")) {
-//    					behaviors.get("anticheat").execute(null);
-//    				}
-//            	}
-//            }
-//            @Override
-//            public void keyReleased (KeyEvent e) {
-//            	if(e.getKeyCode() == KeyEvent.VK_G) {
-//            		if(behaviors.containsKey("stopcheat")) {
-//    					behaviors.get("stopcheat").execute(null);
-//    				}
-//            	}
-//            	if(e.getKeyCode() == KeyEvent.VK_F) {
-//            		if(behaviors.containsKey("stopanticheat")) {
-//    					behaviors.get("stopanticheat").execute(null);
-//    				}
-//            	}
-//            }
-//        });
-
-		component.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseMoved (MouseEvent e) {
-            }
-        });
-        
-		component.addMouseListener(new MouseListener() {
-        	@Override
-			public void mouseClicked(MouseEvent arg0) {}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				if(behaviors.containsKey("continue")) {
-					behaviors.get("continue").execute(null);
-				}
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-			}
-        });
+		inputDevices.add(new KeyboardModule(component,this));
+		inputDevices.add(new MouseModule(component,this));
 	}
 	
 	public void setBehavior(String behaviorName, Command behavior) {
 		behaviors.put(behaviorName, behavior);
 	}
 	
+	public void actionNotification(String action, ActionObject object){
+		if(RESOURCES.containsKey(action) && behaviors.containsKey(RESOURCES.getString(action))) {
+			behaviors.get(RESOURCES.getString(action)).execute(object);
+		}
+	}
 }

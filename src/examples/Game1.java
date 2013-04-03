@@ -11,8 +11,6 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
-
 public class Game1 {
 	private static final int TRACK_LENGTH = 20000;
 	public static final int CHEAT_CODE = KeyEvent.VK_G;
@@ -41,6 +39,7 @@ public class Game1 {
 		updateWindowSize();
 		
 		input1 = new Input("examples/Game1Mapping", myCanvas);
+
 		input1.initBehavior(you);
 //		input1.setBehavior("jump", new Command() {
 //			@Override
@@ -80,6 +79,51 @@ public class Game1 {
 //				popup = false;
 //			}
 //		});
+		input1.setBehavior("jump", new Command() {
+			@Override
+			public void execute(ActionObject actObj) {
+				if (you.getTimeSinceJump(time) > 1 && you.getBottom() > 448) {
+					you.jump(time);
+				}
+			}
+		});
+		input1.setBehavior("cheat", new Command() {
+			@Override
+			public void execute(ActionObject actObj) {
+				you.setCheating(true);
+			}
+		});
+		input1.setBehavior("anticheat", new Command() {
+			@Override
+			public void execute(ActionObject actObj) {
+				you.setAntiCheating(true);
+			}
+		});
+		input1.setBehavior("stopcheat", new Command() {
+			@Override
+			public void execute(ActionObject actObj) {
+				you.setCheating(false);
+			}
+		});
+		input1.setBehavior("stopanticheat", new Command() {
+			@Override
+			public void execute(ActionObject actObj) {
+				you.setAntiCheating(false);
+			}
+		});
+		input1.setBehavior("continue", new Command() {
+			@Override
+			public void execute(ActionObject actObj) {
+				System.out.println(actObj.getData("X_Position") + "," + actObj.getData("Y_Position"));
+				popup = false;
+			}
+		});
+		input1.setBehavior("test", new Command() {
+			@Override
+			public void execute(ActionObject actObj) {
+				System.out.println(actObj.getData("X_Position") + "," + actObj.getData("Y_Position"));
+			}
+		});
 		setUpObstacles();
 	}
 	
@@ -241,7 +285,7 @@ public class Game1 {
 		pen.setFont(new Font("Default", Font.BOLD, 20));
 		pen.setColor(Color.black);
 		pen.drawString("Try to keep up!",
-				windowSize.width / 2 - 180, windowSize.height / 4 + 110);
+				windowSize.width / 2 - 80, windowSize.height / 4 + 110);
 		pen.drawString("Jump with the space bar",
 				windowSize.width / 2 - 120, windowSize.height / 4 + 150);
 		pen.drawString("Click To Move On", windowSize.width / 2 - 90,
