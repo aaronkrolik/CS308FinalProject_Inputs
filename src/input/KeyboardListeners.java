@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JComponent;
 
 public class KeyboardListeners{
+	
 	JComponent myFrame;
 	private String myDevice = "KEYBOARD";
 	
@@ -21,6 +22,7 @@ public class KeyboardListeners{
 		ret.myData = e.paramString();
 		return null;
 	}
+	
 	private void initialize(){
 		myFrame.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e){

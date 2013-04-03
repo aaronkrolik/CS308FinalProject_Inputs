@@ -39,45 +39,47 @@ public class Game1 {
 		jones = new Player(new Pixmap("runningJones.png"),new Pixmap("flyingJones.png"));
 		you = new Player(new Pixmap("runningYou.png"),new Pixmap("flyingYou.png"));
 		updateWindowSize();
+		
 		input1 = new Input("examples/Game1Mapping", myCanvas);
-		input1.setBehavior("jump", new Command() {
-			@Override
-			public void execute(ActionObject actObj) {
-				if (you.getTimeSinceJump(time) > 1 && you.getBottom() > 448) {
-					you.jump(time);
-				}
-			}
-		});
-		input1.setBehavior("cheat", new Command() {
-			@Override
-			public void execute(ActionObject actObj) {
-				you.setCheating(true);
-			}
-		});
-		input1.setBehavior("anticheat", new Command() {
-			@Override
-			public void execute(ActionObject actObj) {
-				you.setAntiCheating(true);
-			}
-		});
-		input1.setBehavior("stopcheat", new Command() {
-			@Override
-			public void execute(ActionObject actObj) {
-				you.setCheating(false);
-			}
-		});
-		input1.setBehavior("stopanticheat", new Command() {
-			@Override
-			public void execute(ActionObject actObj) {
-				you.setAntiCheating(false);
-			}
-		});
-		input1.setBehavior("continue", new Command() {
-			@Override
-			public void execute(ActionObject actObj) {
-				popup = false;
-			}
-		});
+		input1.initBehavior(you);
+//		input1.setBehavior("jump", new Command() {
+//			@Override
+//			public void execute(ActionObject actObj) {
+//				if (you.getTimeSinceJump(time) > 1 && you.getBottom() > 448) {
+//					you.jump(time);
+//				}
+//			}
+//		});
+//		input1.setBehavior("cheat", new Command() {
+//			@Override
+//			public void execute(ActionObject actObj) {
+//				you.setCheating(true);
+//			}
+//		});
+//		input1.setBehavior("anticheat", new Command() {
+//			@Override
+//			public void execute(ActionObject actObj) {
+//				you.setAntiCheating(true);
+//			}
+//		});
+//		input1.setBehavior("stopcheat", new Command() {
+//			@Override
+//			public void execute(ActionObject actObj) {
+//				you.setCheating(false);
+//			}
+//		});
+//		input1.setBehavior("stopanticheat", new Command() {
+//			@Override
+//			public void execute(ActionObject actObj) {
+//				you.setAntiCheating(false);
+//			}
+//		});
+//		input1.setBehavior("continue", new Command() {
+//			@Override
+//			public void execute(ActionObject actObj) {
+//				popup = false;
+//			}
+//		});
 		setUpObstacles();
 	}
 	

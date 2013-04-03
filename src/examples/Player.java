@@ -1,9 +1,15 @@
 package examples;
 
+import input.ActionObject;
+import input.InputTarget;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Creates a Player object which contains the player's state. Is an extension of
@@ -23,7 +29,34 @@ public class Player extends Sprite {
 	private double minigamePosition = 0;
 	private double minigameSpeed = 0;
 	private double minigameTimeOfJump = -100;
-
+	
+	private Map<String, Method> myMapping;
+	
+	
+	public void initListener(Map<String, Method> in){
+		myMapping = in;
+		System.out.println(myMapping);
+	}
+	
+	@InputTarget(name = "foo")
+	public void listener(ActionObject in){
+		
+		try {
+			myMapping.get(in.myName).invoke(this, in);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	
+	
+	
 	public Player(Pixmap firstImage, Pixmap secondImage) {
 		super(firstImage, new Location(150, 400), new Dimension(60, 100));
 		runningImage = firstImage;
@@ -37,6 +70,12 @@ public class Player extends Sprite {
 		}
 	}
 
+	@InputTarget(name = "blah")
+	public void  doShit(ActionObject in){
+		System.out.println("works! "+in.myName);
+	}
+	
+	
 	public void incrementPosition() {
 		minigamePosition += minigameSpeed;
 
