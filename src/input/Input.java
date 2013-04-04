@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.lang.annotation.Annotation;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class Input {
 	private final ResourceBundle RESOURCES;
 	
 	HashMap<String, Command> behaviors = new HashMap<String, Command>();
-	List<Object> myObjects = new ArrayList<Object>();
+	List<WeakReference> myWeakReferences = new ArrayList<WeakReference>();
 	Map<String, Method> keyToMethod = new HashMap<String, Method>();
 	Map<String, Object> keyToInstance = new HashMap<String, Object>();
 	ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>();
@@ -52,7 +53,7 @@ public class Input {
 	
 	
 	public void addListenerTo(Object in){
-		myObjects.add(in);
+		myWeakReferences.add(new WeakReference(in));
 		Class inputClass = in.getClass();	
 		if (inputClass.getAnnotation(InputClassTarget.class) != null){
 			for (Method method : inputClass.getMethods()){
@@ -66,18 +67,20 @@ public class Input {
 	}
 	
 	public void removeListener(Object in){
-		for (int i=0; i<myObjects.size(); i++){
-			if (in == myObjects.get(i)){
-				myObjects.remove(i);
+		for (int i=0; i<myWeakReferences.size(); i++){
+			if (in == myWeakReferences.get(i).get()){
+				myWeakReferences.remove(i);
+				System.out.println("out!");
 				break;
 			}
 		}
 	}
 	
+	//TODO get working with the methodInputs
 	public void execute(String key, ActionObject in){
-		for (Object x : myObjects){
+		for (WeakReference x : myWeakReferences){
 			try {
-				keyToMethod.get(key).invoke(x, null);
+				keyToMethod.get(key).invoke(x.get(), null);
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

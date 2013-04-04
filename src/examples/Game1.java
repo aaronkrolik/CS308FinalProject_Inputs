@@ -39,7 +39,7 @@ public class Game1 {
 		updateWindowSize();
 		
 		input1 = Input.newSingletonInput("examples/Game1Mapping", myCanvas);
-		input1.addListenerTo(you);
+		Input.getSingeltonInput().addListenerTo(you);
 
 
 //		input1.setBehavior("cheat", new Command() {
