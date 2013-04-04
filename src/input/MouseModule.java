@@ -8,13 +8,11 @@ import javax.swing.JComponent;
 
 public class MouseModule extends InputDevice{
 	JComponent myComponent;
-	private Input myInput;
 	public final String myDevice = "MOUSE";
 	
-	public MouseModule(JComponent component, Input input){
+	public MouseModule(JComponent component){
 		super("Keyboard");
 		myComponent = component;
-		myInput = input;
 		initialize();
 	}
 	
@@ -31,12 +29,12 @@ public class MouseModule extends InputDevice{
 		myComponent.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
             public void mouseMoved (MouseEvent e) {
-				myInput.actionNotification("Mouse_Move", getObject(e));
+				Input.getSingeltonInput().actionNotification("Mouse_Move", getObject(e));
             }
             
 			@Override
             public void mouseDragged (MouseEvent e) {
-				myInput.actionNotification("Mouse_Drag", getObject(e));
+				Input.getSingeltonInput().actionNotification("Mouse_Drag", getObject(e));
             }
         });
         
@@ -52,7 +50,7 @@ public class MouseModule extends InputDevice{
 						mouseSide = "Right";
 						break;
 				}
-				myInput.actionNotification("Mouse_" + mouseSide + "_Click", getObject(e));
+				Input.getSingeltonInput().actionNotification("Mouse_" + mouseSide + "_Click", getObject(e));
         	}
 
 			@Override
@@ -72,7 +70,7 @@ public class MouseModule extends InputDevice{
 						mouseSide = "Right";
 						break;
 				}
-				myInput.actionNotification("Mouse_" + mouseSide + "_Down", getObject(e));
+				Input.getSingeltonInput().actionNotification("Mouse_" + mouseSide + "_Down", getObject(e));
 			}
 
 			@Override
@@ -86,7 +84,7 @@ public class MouseModule extends InputDevice{
 						mouseSide = "Right";
 						break;
 				}
-				myInput.actionNotification("Mouse_" + mouseSide + "_Up", getObject(e));
+				Input.getSingeltonInput().actionNotification("Mouse_" + mouseSide + "_Up", getObject(e));
 			}
         });
 	}

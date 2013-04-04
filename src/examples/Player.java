@@ -1,7 +1,8 @@
 package examples;
 
 import input.ActionObject;
-import input.InputTarget;
+import input.InputClassTarget;
+import input.InputMethodTarget;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,6 +18,7 @@ import java.util.Map;
  * 
  * @author Gavin Ovsak
  */
+@InputClassTarget
 public class Player extends Sprite {
 	private static final int GRAVITY = -280;
 	private static final int JUMP_VELOCITY = 330;
@@ -38,7 +40,7 @@ public class Player extends Sprite {
 		System.out.println(myMapping);
 	}
 	
-	@InputTarget(name = "foo")
+	@InputMethodTarget(name = "foo")
 	public void listener(ActionObject in){
 		
 		try {
@@ -62,7 +64,7 @@ public class Player extends Sprite {
 		runningImage = firstImage;
 		flyingImage = secondImage;
 	}
-
+	
 	public void jump(double time) {
 		minigameTimeOfJump = time;
 		if (minigameSpeed + 6 <= MAX_SPEED) {
@@ -70,7 +72,7 @@ public class Player extends Sprite {
 		}
 	}
 
-	@InputTarget(name = "blah")
+	@InputMethodTarget(name = "blah")
 	public void  doShit(ActionObject in){
 		System.out.println("works! "+in.myName);
 	}
@@ -86,7 +88,7 @@ public class Player extends Sprite {
 			minigameSpeed = 0;
 		}
 	}
-
+	@InputMethodTarget(name="jump")
 	public void slowDown() {
 		if (minigameSpeed > 10) {
 			minigameSpeed -= 10;
