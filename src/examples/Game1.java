@@ -38,47 +38,9 @@ public class Game1 {
 		you = new Player(new Pixmap("runningYou.png"),new Pixmap("flyingYou.png"));
 		updateWindowSize();
 		
-		input1 = Input.newSingletonInput("examples/Game1Mapping", myCanvas);
+		Input.newSingletonInput("examples/Game1Mapping", myCanvas);
 		Input.getSingeltonInput().addListenerTo(you);
 
-
-//		input1.setBehavior("cheat", new Command() {
-//			@Override
-//			public void execute(ActionObject actObj) {
-//				you.setCheating(true);
-//			}
-//		});
-//		input1.setBehavior("anticheat", new Command() {
-//			@Override
-//			public void execute(ActionObject actObj) {
-//				you.setAntiCheating(true);
-//			}
-//		});
-//		input1.setBehavior("stopcheat", new Command() {
-//			@Override
-//			public void execute(ActionObject actObj) {
-//				you.setCheating(false);
-//			}
-//		});
-//		input1.setBehavior("stopanticheat", new Command() {
-//			@Override
-//			public void execute(ActionObject actObj) {
-//				you.setAntiCheating(false);
-//			}
-//		});
-//		input1.setBehavior("continue", new Command() {
-//			@Override
-//			public void execute(ActionObject actObj) {
-//				System.out.println(actObj.getData("X_Position") + "," + actObj.getData("Y_Position"));
-//				popup = false;
-//			}
-//		});
-//		input1.setBehavior("test", new Command() {
-//			@Override
-//			public void execute(ActionObject actObj) {
-//				System.out.println(actObj.getData("X_Position") + "," + actObj.getData("Y_Position"));
-//			}
-//		});
 		setUpObstacles();
 	}
 	

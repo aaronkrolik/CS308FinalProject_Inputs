@@ -19,7 +19,11 @@ import java.util.ResourceBundle;
 import javax.swing.JComponent;
 
 import examples.Player;
-
+/**
+ * Singleton Input class to handle all sorts of input goodies behind the hood 
+ * @author aaronkrolik
+ *
+ */
 public class Input {
 	
 	private static Input myInstance;
@@ -51,7 +55,7 @@ public class Input {
 		inputDevices.add(new MouseModule(component));
 	}
 	
-	
+	//TODO handle overloaded methods. need incorporate the param field
 	public void addListenerTo(Object in){
 		myWeakReferences.add(new WeakReference(in));
 		Class inputClass = in.getClass();	

@@ -32,31 +32,6 @@ public class Player extends Sprite {
 	private double minigameSpeed = 0;
 	private double minigameTimeOfJump = -100;
 	
-	private Map<String, Method> myMapping;
-	
-	
-	public void initListener(Map<String, Method> in){
-		myMapping = in;
-		System.out.println(myMapping);
-	}
-	
-	@InputMethodTarget(name = "foo")
-	public void listener(ActionObject in){
-		
-		try {
-			myMapping.get(in.myName).invoke(this, in);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-	}
-	
 	
 	
 	public Player(Pixmap firstImage, Pixmap secondImage) {
@@ -72,10 +47,6 @@ public class Player extends Sprite {
 		}
 	}
 
-	@InputMethodTarget(name = "blah")
-	public void  doShit(ActionObject in){
-		System.out.println("works! "+in.myName);
-	}
 	
 	
 	public void incrementPosition() {
