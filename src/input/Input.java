@@ -31,7 +31,7 @@ public class Input {
 	Map<String, Object> keyToInstance = new HashMap<String, Object>();
 	ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>();
 
-	Object foo;
+
 	
 	public static Input newSingletonInput(String resourcePath, JComponent component){
 		if (myInstance == null) {
@@ -53,7 +53,6 @@ public class Input {
 	
 	public void addListenerTo(Object in){
 		myObjects.add(in);
-		foo = in;
 		Class inputClass = in.getClass();	
 		if (inputClass.getAnnotation(InputClassTarget.class) != null){
 			for (Method method : inputClass.getMethods()){
@@ -64,6 +63,15 @@ public class Input {
 				}	
 			}
 		}			
+	}
+	
+	public void removeListener(Object in){
+		for (int i=0; i<myObjects.size(); i++){
+			if (in == myObjects.get(i)){
+				myObjects.remove(i);
+				break;
+			}
+		}
 	}
 	
 	public void execute(String key, ActionObject in){
@@ -84,10 +92,6 @@ public class Input {
 			}
 		}
 	}
-	
-	
-	
-	
 	
 	
 	public void setBehavior(String behaviorName, Command behavior) {

@@ -88,7 +88,9 @@ public class Player extends Sprite {
 			minigameSpeed = 0;
 		}
 	}
-	@InputMethodTarget(name="jump")
+	
+	
+	@InputMethodTarget(name="slow")
 	public void slowDown() {
 		if (minigameSpeed > 10) {
 			minigameSpeed -= 10;
