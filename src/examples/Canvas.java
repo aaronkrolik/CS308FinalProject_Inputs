@@ -8,15 +8,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.*;
-import java.util.ArrayList;
-
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.Timer;
-
-import input.Command;
-import input.Input;
-
 
 /**
  * Creates an area of the screen in which the game will be drawn that supports:

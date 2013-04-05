@@ -1,8 +1,10 @@
 package examples;
 
-import input.ActionObject;
-import input.Command;
+import input.AlertObject;
 import input.Input;
+import input.InputClassTarget;
+import input.InputMethodTarget;
+import input.PositionObject;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+@InputClassTarget
 public class Game1 {
 	private static final int TRACK_LENGTH = 20000;
 	public static final int CHEAT_CODE = KeyEvent.VK_G;
@@ -24,11 +27,8 @@ public class Game1 {
 	private Player you;
 	private double time;
 	private Dimension windowSize;
-	private int oldKey = 0;
-	private boolean wasMouseDown = false;
 	private boolean popup = false;
 	Input input1;
-	//JFrame myFrame;
 	Canvas myCanvas;
 	private ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 
@@ -38,8 +38,8 @@ public class Game1 {
 		you = new Player(new Pixmap("runningYou.png"),new Pixmap("flyingYou.png"));
 		updateWindowSize();
 		
-		Input.newSingletonInput("examples/Game1Mapping", myCanvas);
-		Input.getSingeltonInput().addListenerTo(you);
+		input1 = new Input("examples/Game1Mapping", myCanvas);
+		input1.addListenerTo(this);
 
 		setUpObstacles();
 	}
@@ -50,7 +50,44 @@ public class Game1 {
 	private void updateWindowSize() {
 		windowSize = myCanvas.getSize();
 	}
+	
+	@InputMethodTarget(name="jump")
+	public void jumpInput(AlertObject alObj) {
+		if (you.getTimeSinceJump(time) > 1 && you.getBottom() > 448) {
+			you.jump(time);
+		}
+	}
 
+	@InputMethodTarget(name="cheat")
+	public void cheat(AlertObject alObj) {
+		you.setCheating(true);
+	}
+	
+	@InputMethodTarget(name="anticheat")
+	public void anticheat(AlertObject alObj) {
+			you.setAntiCheating(true);
+	}
+	
+	@InputMethodTarget(name="stopcheat")
+	public void stopcheat(AlertObject alObj) {
+		you.setCheating(false);
+	}
+
+	@InputMethodTarget(name="stopanticheat")
+	public void stopanticheat(AlertObject alObj) {
+		you.setAntiCheating(false);
+	}
+	
+	@InputMethodTarget(name="continue")
+	public void goPastPopup(PositionObject posObj) {
+		popup = false;
+	}
+	
+	@InputMethodTarget(name="test")
+	public void movementCoordTest(PositionObject posObj) {
+		System.out.println(posObj.getX() + ", " + posObj.getY());
+	}
+	
 	/**
 	 * Keeps the local time counter updated
 	 * 

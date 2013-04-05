@@ -1,16 +1,6 @@
 package examples;
 
-import input.ActionObject;
-import input.InputClassTarget;
-import input.InputMethodTarget;
-
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Creates a Player object which contains the player's state. Is an extension of
@@ -18,7 +8,6 @@ import java.util.Map;
  * 
  * @author Gavin Ovsak
  */
-@InputClassTarget
 public class Player extends Sprite {
 	private static final int GRAVITY = -280;
 	private static final int JUMP_VELOCITY = 330;
@@ -32,15 +21,12 @@ public class Player extends Sprite {
 	private double minigameSpeed = 0;
 	private double minigameTimeOfJump = -100;
 	
-	
-	
 	public Player(Pixmap firstImage, Pixmap secondImage) {
 		super(firstImage, new Location(150, 400), new Dimension(60, 100));
 		runningImage = firstImage;
 		flyingImage = secondImage;
 	}
 	
-	@InputMethodTarget(name="jump")
 	public void jump(double time) {
 		minigameTimeOfJump = time;
 		if (minigameSpeed + 6 <= MAX_SPEED) {
@@ -48,8 +34,6 @@ public class Player extends Sprite {
 		}
 	}
 
-	
-	
 	public void incrementPosition() {
 		minigamePosition += minigameSpeed;
 

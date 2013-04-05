@@ -9,18 +9,11 @@ public class KeyboardModule extends InputDevice{
 	private Input myInput;
 	public final String myDevice = "KEYBOARD";
 	
-	public KeyboardModule(JComponent component){
+	public KeyboardModule(JComponent component, Input input){
 		super("Keyboard");
+		myInput = input;
 		myComponent = component;
 		initialize();
-	}
-	
-	private AlertObject getObject(KeyEvent e){
-		AlertObject actObj = new AlertObject();
-		actObj.setData("My Caller Device", myDevice);
-		actObj.setData("My Data", e.paramString());
-		actObj.myName = "blah";
-		return actObj;
 	}
 	
 	private void initialize(){
@@ -28,13 +21,13 @@ public class KeyboardModule extends InputDevice{
 			@Override
 			public void keyPressed(KeyEvent e){
 				String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
-				Input.getSingeltonInput().actionNotification("Keyboard_" + keyName + "_KeyDown", getObject(e)); //return AlertObject
+				myInput.actionNotification("Keyboard_" + keyName + "_KeyDown", new AlertObject(e.getWhen()));
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
 				String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
-				Input.getSingeltonInput().actionNotification("Keyboard_" + keyName + "_KeyUp", getObject(e));
+				myInput.actionNotification("Keyboard_" + keyName + "_KeyUp", new AlertObject(e.getWhen()));
 			}
 
 			@Override

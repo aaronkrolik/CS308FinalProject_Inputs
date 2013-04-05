@@ -1,11 +1,5 @@
 package input;
 
-import java.awt.Point;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
@@ -18,17 +12,14 @@ import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
 
-import examples.Player;
-
 /**
- * Singleton Input class to handle all sorts of input goodies behind the hood
+ * Input API built to allow games to accept input from an expandable set of input devices.
  * 
- * @author aaronkrolik
+ * @author Gavin Ovsak, aaronkrolik
  * 
  */
+@SuppressWarnings("rawtypes")
 public class Input {
-
-	private static Input myInstance;
 
 	private final ResourceBundle RESOURCES;
 
@@ -37,39 +28,19 @@ public class Input {
 	Map<String, Object> keyToInstance = new HashMap<String, Object>();
 	ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); //still not sure if needed 
 
-	/**
-	 * (Convenience) Singleton constructor. I'm almost as ashamed as I am lazy
-	 * 
-	 * @param String shameful
-	 * @param JComponent hack
-	 * @return Input instance
-	 */
-	public static Input newSingletonInput(String resourcePath,
-			JComponent component) {
-		if (myInstance == null) {
-			myInstance = new Input(resourcePath, component);
-		}
-		return myInstance;
-	}
-
-	public static Input getSingeltonInput() {
-		return myInstance;
-	}
-
-	private Input(String resourcePath, JComponent component) {
+	public Input(String resourcePath, JComponent component) {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
-		inputDevices.add(new KeyboardModule(component));
-		inputDevices.add(new MouseModule(component));
+		inputDevices.add(new KeyboardModule(component, this));
+		inputDevices.add(new MouseModule(component, this));
 	}
 
 	/**
 	 * Include input instance in our collection of instances that can have
 	 * annotated methods invoked
 	 * 
-	 * @param Object input. any object will do 
-	 * TODO handle overloaded methods. need incorporate the param field
-	 *            
+	 * @param Object input
 	 */
+	@SuppressWarnings("unchecked")
 	public void addListenerTo(Object in) {
 		myWeakReferences.add(new WeakReference(in));
 		Class inputClass = in.getClass();
@@ -78,8 +49,6 @@ public class Input {
 				Annotation annotation = method
 						.getAnnotation(InputMethodTarget.class);
 				if (annotation instanceof InputMethodTarget) {
-					System.out.println("reflecting"
-							+ ((InputMethodTarget) annotation).name());
 					keyToMethod.put(((InputMethodTarget) annotation).name(),
 							method);
 				}
@@ -88,9 +57,8 @@ public class Input {
 	}
 
 	/**
-	 * Uses nifty methodObject and instance caches to reflexively invoke methods
-	 * TODO: get working with the methodInputs 
-	 * TODO: real exceptions ...
+	 * Executes methods using reflection
+	 * TODO: Better exception handling
 	 * 
 	 * @param key
 	 * @param in
@@ -98,24 +66,19 @@ public class Input {
 	public void execute(String key, ActionObject in) {
 		for (WeakReference x : myWeakReferences) {
 			try {
-				System.out.println("d " + key);
-				if(key.equals("jump") && in instanceof AlertObject) {
-					keyToMethod.get(key).invoke(x.get(), (AlertObject)in);
-				}
-				else
-				{
-					keyToMethod.get(key).invoke(x.get(), in);
-				}
+				Class[] paramClasses = keyToMethod.get(key).getParameterTypes();
+				if(paramClasses[0].isInstance(in))
+ 					keyToMethod.get(key).invoke(x.get(), paramClasses[0].cast(in));
 			} catch (IllegalArgumentException e) {
 			} catch (IllegalAccessException e) {
 			} catch (InvocationTargetException e) {
-			} catch (NullPointerException e) {}
+			} catch (NullPointerException e) {
+			}
 		}
 	}
 
 	/**
-	 * actionNotification aka massiveHack.
-	 * TODO: make less shitty.
+	 * Notification receiver from input devices
 	 * 
 	 * @param action
 	 * @param object
@@ -125,7 +88,7 @@ public class Input {
 			if(RESOURCES.containsKey(action))
 				execute(RESOURCES.getString(action), object);
 		} catch (NullPointerException e) {
-			System.out.println("null pointer oops");
+			System.out.println("Null Pointer Exception");
 		}
 	}
 }

@@ -8,33 +8,26 @@ import javax.swing.JComponent;
 
 public class MouseModule extends InputDevice{
 	JComponent myComponent;
+	Input myInput;
 	public final String myDevice = "MOUSE";
 	
-	public MouseModule(JComponent component){
+	public MouseModule(JComponent component, Input input){
 		super("Keyboard");
+		myInput = input;
 		myComponent = component;
 		initialize();
-	}
-	
-	private ActionObject getObject(MouseEvent e){
-		ActionObject actObj = new ActionObject();
-		actObj.setData("X_Position", ""+e.getX());
-		actObj.setData("Y_Position", ""+e.getY());
-		actObj.setData("My Caller Device", myDevice);
-		actObj.setData("My Data", e.paramString());
-		return actObj;
 	}
 	
 	private void initialize(){
 		myComponent.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
             public void mouseMoved (MouseEvent e) {
-				Input.getSingeltonInput().actionNotification("Mouse_Move", getObject(e));
+				myInput.actionNotification("Mouse_Move", new PositionObject(e.getX(), e.getY()));
             }
             
 			@Override
             public void mouseDragged (MouseEvent e) {
-				Input.getSingeltonInput().actionNotification("Mouse_Drag", getObject(e));
+				myInput.actionNotification("Mouse_Drag", new PositionObject(e.getX(), e.getY()));
             }
         });
         
@@ -50,7 +43,7 @@ public class MouseModule extends InputDevice{
 						mouseSide = "Right";
 						break;
 				}
-				Input.getSingeltonInput().actionNotification("Mouse_" + mouseSide + "_Click", getObject(e));
+				myInput.actionNotification("Mouse_" + mouseSide + "_Click", new PositionObject(e.getX(), e.getY()));
         	}
 
 			@Override
@@ -70,7 +63,7 @@ public class MouseModule extends InputDevice{
 						mouseSide = "Right";
 						break;
 				}
-				Input.getSingeltonInput().actionNotification("Mouse_" + mouseSide + "_Down", getObject(e));
+				myInput.actionNotification("Mouse_" + mouseSide + "_Down", new PositionObject(e.getX(), e.getY()));
 			}
 
 			@Override
@@ -84,7 +77,7 @@ public class MouseModule extends InputDevice{
 						mouseSide = "Right";
 						break;
 				}
-				Input.getSingeltonInput().actionNotification("Mouse_" + mouseSide + "_Up", getObject(e));
+				myInput.actionNotification("Mouse_" + mouseSide + "_Up", new PositionObject(e.getX(), e.getY()));
 			}
         });
 	}
