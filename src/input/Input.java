@@ -88,22 +88,6 @@ public class Input {
 	}
 
 	/**
-	 * Remove an instance from our cache. This means that it will not be called
-	 * even if it has relevant target
-	 * 
-	 * @param Object input (any type will do)
-	 */
-	public void removeListener(Object in) {
-		for (int i = 0; i < myWeakReferences.size(); i++) {
-			if (in == myWeakReferences.get(i).get()) {
-				myWeakReferences.remove(i);
-				System.out.println("out!");
-				break;
-			}
-		}
-	}
-
-	/**
 	 * Uses nifty methodObject and instance caches to reflexively invoke methods
 	 * TODO: get working with the methodInputs 
 	 * TODO: real exceptions ...
@@ -114,19 +98,18 @@ public class Input {
 	public void execute(String key, ActionObject in) {
 		for (WeakReference x : myWeakReferences) {
 			try {
-				keyToMethod.get(key).invoke(x.get(), null);
+				System.out.println("d " + key);
+				if(key.equals("jump") && in instanceof AlertObject) {
+					keyToMethod.get(key).invoke(x.get(), (AlertObject)in);
+				}
+				else
+				{
+					keyToMethod.get(key).invoke(x.get(), in);
+				}
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NullPointerException e) {
-
-			}
+			} catch (NullPointerException e) {}
 		}
 	}
 
@@ -136,11 +119,11 @@ public class Input {
 	 * 
 	 * @param action
 	 * @param object
-	 *        
 	 */
 	public void actionNotification(String action, ActionObject object) {
 		try {
-			execute(RESOURCES.getString(action), object);
+			if(RESOURCES.containsKey(action))
+				execute(RESOURCES.getString(action), object);
 		} catch (NullPointerException e) {
 			System.out.println("null pointer oops");
 		}

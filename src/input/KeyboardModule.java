@@ -15,8 +15,8 @@ public class KeyboardModule extends InputDevice{
 		initialize();
 	}
 	
-	private ActionObject getObject(KeyEvent e){
-		ActionObject actObj = new ActionObject();
+	private AlertObject getObject(KeyEvent e){
+		AlertObject actObj = new AlertObject();
 		actObj.setData("My Caller Device", myDevice);
 		actObj.setData("My Data", e.paramString());
 		actObj.myName = "blah";
@@ -28,7 +28,7 @@ public class KeyboardModule extends InputDevice{
 			@Override
 			public void keyPressed(KeyEvent e){
 				String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
-				Input.getSingeltonInput().actionNotification("Keyboard_" + keyName + "_KeyDown", getObject(e));
+				Input.getSingeltonInput().actionNotification("Keyboard_" + keyName + "_KeyDown", getObject(e)); //return AlertObject
 			}
 
 			@Override

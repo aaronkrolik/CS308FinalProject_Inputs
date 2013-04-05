@@ -40,6 +40,7 @@ public class Player extends Sprite {
 		flyingImage = secondImage;
 	}
 	
+	@InputMethodTarget(name="jump")
 	public void jump(double time) {
 		minigameTimeOfJump = time;
 		if (minigameSpeed + 6 <= MAX_SPEED) {
@@ -61,7 +62,6 @@ public class Player extends Sprite {
 	}
 	
 	
-	@InputMethodTarget(name="slow")
 	public void slowDown() {
 		if (minigameSpeed > 10) {
 			minigameSpeed -= 10;
