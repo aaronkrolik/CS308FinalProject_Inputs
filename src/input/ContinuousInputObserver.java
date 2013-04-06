@@ -1,6 +1,5 @@
 package input;
 
-import java.util.List;
 import java.util.Observable;
 
 /**
@@ -13,14 +12,12 @@ public class ContinuousInputObserver extends InputObserver{
 	
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		KeyboardModule device = (KeyboardModule) arg0;
-		List<ActionObject> activeActions = device.getActiveObjects();
+		InputDevice device = (InputDevice) arg0;
+		ActionObjectManager manager = device.getManager();
 		boolean detectContinuousInputs = false;
-		ActionObject newAction = activeActions
-				.get(activeActions.size() - 1);
-		if (activeActions.size() >= 2) {
-			ActionObject previousAction = activeActions.get(activeActions
-					.size() - 2);
+		ActionObject newAction = manager.getLatestAction();
+		if (manager.getNumberOfActiveActions() >= 2) {
+			ActionObject previousAction = manager.getAction(manager.getNumberOfActiveActions()-2);
 			if (newAction.getInputSource().equals(
 					previousAction.getInputSource())
 					&& newAction.getTime() - previousAction.getTime() <= continuousKeytimeLimit)
@@ -28,7 +25,7 @@ public class ContinuousInputObserver extends InputObserver{
 		}
 		if(detectContinuousInputs){
 			device.notifyInputAction(newAction.getInputSource()+"_LongPressed", newAction);
-			device.hasComplexInputs();
+			device.setSingleInputTag(false);
 		}
 	}
 

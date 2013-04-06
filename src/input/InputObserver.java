@@ -5,7 +5,7 @@ import java.util.Observer;
 
 /**
  * This is a observer to the input
- * @author Ying Chen
+ * @author Ying
  *
  */
 public class InputObserver implements Observer {
