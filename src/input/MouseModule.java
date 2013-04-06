@@ -22,12 +22,12 @@ public class MouseModule extends InputDevice{
 		myComponent.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
             public void mouseMoved (MouseEvent e) {
-				myInput.actionNotification("Mouse_Move", new PositionObject(e.getX(), e.getY(),"Mouse_Move",e.getWhen()));
+				myInput.actionNotification("Mouse_Move", new PositionObject(e.getX(), e.getY()));
             }
             
 			@Override
             public void mouseDragged (MouseEvent e) {
-				myInput.actionNotification("Mouse_Drag", new PositionObject(e.getX(), e.getY(),"Mouse_Drag",e.getWhen()));
+				myInput.actionNotification("Mouse_Drag", new PositionObject(e.getX(), e.getY()));
             }
         });
         
@@ -43,8 +43,7 @@ public class MouseModule extends InputDevice{
 						mouseSide = "Right";
 						break;
 				}
-				String inputSource = "Mouse_" + mouseSide + "_Click";
-				myInput.actionNotification(inputSource, new PositionObject(e.getX(), e.getY(),inputSource,e.getWhen()));
+				myInput.actionNotification("Mouse_" + mouseSide + "_Click", new PositionObject(e.getX(), e.getY()));
         	}
 
 			@Override
@@ -64,8 +63,7 @@ public class MouseModule extends InputDevice{
 						mouseSide = "Right";
 						break;
 				}
-				String inputSource = "Mouse_" + mouseSide + "_Down";
-				myInput.actionNotification(inputSource, new PositionObject(e.getX(), e.getY(),inputSource,e.getWhen()));
+				myInput.actionNotification("Mouse_" + mouseSide + "_Down", new PositionObject(e.getX(), e.getY()));
 			}
 
 			@Override
@@ -79,8 +77,7 @@ public class MouseModule extends InputDevice{
 						mouseSide = "Right";
 						break;
 				}
-				String inputSource = "Mouse_" + mouseSide + "_Up";
-				myInput.actionNotification(inputSource, new PositionObject(e.getX(), e.getY(),inputSource,e.getWhen()));
+				myInput.actionNotification("Mouse_" + mouseSide + "_Up", new PositionObject(e.getX(), e.getY()));
 			}
         });
 	}

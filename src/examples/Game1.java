@@ -88,16 +88,6 @@ public class Game1 {
 		System.out.println(posObj.getX() + ", " + posObj.getY());
 	}
 	
-	@InputMethodTarget(name="fight")
-	public void fight(AlertObject posObj){
-		System.out.println("Here is compound input of S and D");
-	}
-	
-	@InputMethodTarget(name="defense")
-	public void defense(AlertObject posObj){
-		System.out.println("Here is continuous input of H");
-	}
-	
 	/**
 	 * Keeps the local time counter updated
 	 * 
