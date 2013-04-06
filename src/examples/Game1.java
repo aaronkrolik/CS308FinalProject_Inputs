@@ -27,7 +27,7 @@ public class Game1 {
 	private Player you;
 	private double time;
 	private Dimension windowSize;
-	private boolean popup = false;
+	private boolean popup = true;
 	Input input1;
 	Canvas myCanvas;
 	private ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
