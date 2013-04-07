@@ -13,7 +13,6 @@ public class InputDevice extends Observable {
 	private String myName;
 	private Input myInput;
 	private ActionObjectManager myManager;
-	private boolean isSingleInput = true;
 
 	public InputDevice(String name, Input input) {
 		myName = name;
@@ -45,19 +44,5 @@ public class InputDevice extends Observable {
 
 	public ActionObjectManager getManager() {
 		return myManager;
-	}
-
-	/**
-	 * Make isSingleInput true when the current input is not included in any
-	 * complex inputs, including compound inputs and continuous inputs
-	 * 
-	 * @param tag
-	 */
-	public void setSingleInputTag(boolean tag) {
-		isSingleInput = tag;
-	}
-
-	public boolean isSingleInput() {
-		return isSingleInput;
 	}
 }

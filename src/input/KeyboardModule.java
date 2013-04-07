@@ -27,15 +27,15 @@ public class KeyboardModule extends InputDevice{
 		myComponent.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				setSingleInputTag(true);
 				String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
 				String inputSource = "Keyboard_" + keyName + "_KeyDown";
 				ActionObject currentAction = new AlertObject(e.getWhen(),
 						inputSource);
 				getManager().addNewAction(currentAction);
-				notifyChange();
-				if(isSingleInput())
+				if(getManager().singleActiveAction())
 					notifyInputAction(inputSource, currentAction);
+				else
+					notifyChange();
 			}
 
 			@Override

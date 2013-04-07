@@ -25,10 +25,10 @@ public class TwoCompoundInputObserver extends InputObserver{
 				detectCompoundKeys = true;
 			}
 		}
-		if(detectCompoundKeys){
+		if(detectCompoundKeys)
 			device.notifyInputAction(compundKeyInfo, newAction);
-			device.setSingleInputTag(false);
-		}
+		else
+			device.notifyInputAction(newAction.getInputSource(), newAction);
 	}
 
 }

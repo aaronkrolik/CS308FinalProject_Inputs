@@ -23,10 +23,11 @@ public class ContinuousInputObserver extends InputObserver{
 					&& newAction.getTime() - previousAction.getTime() <= continuousKeytimeLimit)
 				detectContinuousInputs = true;
 		}
-		if(detectContinuousInputs){
+		if(detectContinuousInputs)
 			device.notifyInputAction(newAction.getInputSource()+"_LongPressed", newAction);
-			device.setSingleInputTag(false);
-		}
+		else
+			device.notifyInputAction(newAction.getInputSource(), newAction);
+		
 	}
 
 }

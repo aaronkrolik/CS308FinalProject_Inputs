@@ -38,4 +38,8 @@ public class ActionObjectManager {
 	public ActionObject getLatestAction(){
 		return activeActions.get(getNumberOfActiveActions()-1);
 	}
+	
+	public boolean singleActiveAction(){
+		return activeActions.size()  == 0;
+	}
 }
