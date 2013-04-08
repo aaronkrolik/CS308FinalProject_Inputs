@@ -16,16 +16,20 @@ public class MouseModule extends InputDevice{
 		initialize();
 	}
 	
+	private PositionObject makePositionObject(MouseEvent e, String source) {
+		return new PositionObject(e.getX()/myComponent.getWidth(), e.getY()/myComponent.getHeight(),source,e.getWhen());
+	}
+	
 	private void initialize(){
 		myComponent.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
             public void mouseMoved (MouseEvent e) {
-				notifyInputAction("Mouse_Move", new PositionObject(e.getX(), e.getY(),"Mouse_Move",e.getWhen()));
+				notifyInputAction("Mouse_Move", makePositionObject(e, "Mouse_Move"));
             }
             
 			@Override
             public void mouseDragged (MouseEvent e) {
-				notifyInputAction("Mouse_Drag",new PositionObject(e.getX(), e.getY(),"Mouse_Drag",e.getWhen()));
+				notifyInputAction("Mouse_Drag", makePositionObject(e, "Mouse_Drag"));
             }
         });
         
@@ -37,12 +41,12 @@ public class MouseModule extends InputDevice{
 					case MouseEvent.BUTTON1:
 						mouseSide = "Left";
 						break;
-					case MouseEvent.BUTTON2:
+					case MouseEvent.BUTTON3:
 						mouseSide = "Right";
 						break;
 				}
 				String inputSource = "Mouse_" + mouseSide + "_Click";
-				notifyInputAction(inputSource, new PositionObject(e.getX(), e.getY(),inputSource,e.getWhen()));
+				notifyInputAction(inputSource, makePositionObject(e, inputSource));
         	}
 
 			@Override
@@ -58,12 +62,12 @@ public class MouseModule extends InputDevice{
 					case MouseEvent.BUTTON1:
 						mouseSide = "Left";
 						break;
-					case MouseEvent.BUTTON2:
+					case MouseEvent.BUTTON3:
 						mouseSide = "Right";
 						break;
 				}
 				String inputSource = "Mouse_" + mouseSide + "_Down";
-				notifyInputAction(inputSource,new PositionObject(e.getX(), e.getY(),inputSource,e.getWhen()));
+				notifyInputAction(inputSource, makePositionObject(e, inputSource));
 			}
 
 			@Override
@@ -73,12 +77,12 @@ public class MouseModule extends InputDevice{
 					case MouseEvent.BUTTON1:
 						mouseSide = "Left";
 						break;
-					case MouseEvent.BUTTON2:
+					case MouseEvent.BUTTON3:
 						mouseSide = "Right";
 						break;
 				}
 				String inputSource = "Mouse_" + mouseSide + "_Up";
-				notifyInputAction(inputSource,new PositionObject(e.getX(), e.getY(),inputSource,e.getWhen()));
+				notifyInputAction(inputSource, makePositionObject(e, inputSource));
 			}
         });
 	}
