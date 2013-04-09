@@ -27,7 +27,6 @@ public abstract class InputDevice {
 	 * @param object
 	 */
 	protected void notifyInputAction(String info, ActionObject object) {
-		System.out.println(info);
 		myInput.actionNotification(info, object);
 	}
 	
