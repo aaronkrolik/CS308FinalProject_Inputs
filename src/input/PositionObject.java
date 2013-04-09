@@ -7,12 +7,12 @@ public class PositionObject extends ActionObject {
 	private double myY;
 	private double myZ;
 	
-	public PositionObject(double x, double y, String inputSource, long time) {
-		this(x,y,0,inputSource,time);
+	public PositionObject(double x, double y, long time) {
+		this(x,y,0,time);
 	}
 	
-	public PositionObject(double x, double y, double z, String inputSource, long time) {
-		super(time,inputSource);
+	public PositionObject(double x, double y, double z, long time) {
+		super(time);
 		myX = x;
 		myY = y;
 		myZ = z;

@@ -85,17 +85,17 @@ public class Game1 {
 	
 	@InputMethodTarget(name="test")
 	public void movementCoordTest(PositionObject posObj) {
-		System.out.println(posObj.getX() + ", " + posObj.getY());
+		//System.out.println(posObj.getX() + ", " + posObj.getY());
 	}
 	
 	@InputMethodTarget(name="fight")
 	public void fight(AlertObject posObj){
-		System.out.println("Here is compound input of S and D");
+		//System.out.println("Here is compound input of S and D");
 	}
 	
 	@InputMethodTarget(name="defense")
 	public void defense(AlertObject posObj){
-		System.out.println("Here is continuous input of H");
+		//System.out.println("Here is continuous input of H");
 	}
 	
 	/**
