@@ -102,7 +102,6 @@ public class Input {
 	 * @param object
 	 */
 	public void actionNotification(String action, ActionObject object) {
-		System.out.println(action);
 		try {
 			if(RESOURCES.containsKey(action))
 				execute(RESOURCES.getString(action), object);
