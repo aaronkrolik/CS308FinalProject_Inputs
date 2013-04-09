@@ -45,6 +45,7 @@ public class KeyboardModule extends InputDevice{
 
 	private void recurse(String accumulatedKeys, ArrayList<KeyState> keyArray, int maxSize, long time) {
 		if(maxSize == 0) {
+			System.out.println("hi");
 			notifyInputAction("Keyboard_" + accumulatedKeys + "_KeyDown", new AlertObject(time));
 		} else {
 			for(KeyState key : keyArray) {
