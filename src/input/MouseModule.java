@@ -1,40 +1,42 @@
 package input;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
-
 import javax.swing.JComponent;
 
 public class MouseModule extends InputDevice{
 	JComponent myComponent;
 	public final String myDevice = "MOUSE";
+
+	long leftPressedTime = 0;
+	long rightPressedTime = 0;
+	long centerPressedTime = 0;
 	
-	public MouseModule(JComponent component){
-		super("Keyboard");
+	Point lastPosition;
+	long lastClickTime = 0;
+		
+	public MouseModule(JComponent component, Input input){
+		super("MOUSE",input);
 		myComponent = component;
 		initialize();
 	}
 	
-	private ActionObject getObject(MouseEvent e){
-		ActionObject actObj = new ActionObject();
-		actObj.setData("X_Position", ""+e.getX());
-		actObj.setData("Y_Position", ""+e.getY());
-		actObj.setData("My Caller Device", myDevice);
-		actObj.setData("My Data", e.paramString());
-		return actObj;
+	private PositionObject makePositionObject(MouseEvent e) {
+		return new PositionObject(e.getX()/myComponent.getWidth(), e.getY()/myComponent.getHeight(),e.getWhen());
 	}
 	
 	private void initialize(){
 		myComponent.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
             public void mouseMoved (MouseEvent e) {
-				Input.getSingeltonInput().actionNotification("Mouse_Move", getObject(e));
+				notifyInputAction("Mouse_Move", makePositionObject(e));
             }
             
 			@Override
             public void mouseDragged (MouseEvent e) {
-				Input.getSingeltonInput().actionNotification("Mouse_Drag", getObject(e));
+				notifyInputAction("Mouse_Drag", makePositionObject(e));
             }
         });
         
@@ -47,10 +49,14 @@ public class MouseModule extends InputDevice{
 						mouseSide = "Left";
 						break;
 					case MouseEvent.BUTTON2:
+						mouseSide = "Center";
+						break;
+					case MouseEvent.BUTTON3:
 						mouseSide = "Right";
 						break;
 				}
-				Input.getSingeltonInput().actionNotification("Mouse_" + mouseSide + "_Click", getObject(e));
+				String inputSource = "Mouse_" + mouseSide + "_Click";
+				notifyInputAction(inputSource, makePositionObject(e));
         	}
 
 			@Override
@@ -65,26 +71,54 @@ public class MouseModule extends InputDevice{
 				switch(e.getButton()) {
 					case MouseEvent.BUTTON1:
 						mouseSide = "Left";
+						leftPressedTime = e.getWhen();
 						break;
 					case MouseEvent.BUTTON2:
+						mouseSide = "Center";
+						centerPressedTime = e.getWhen();
+						break;
+					case MouseEvent.BUTTON3:
 						mouseSide = "Right";
+						rightPressedTime = e.getWhen();
 						break;
 				}
-				Input.getSingeltonInput().actionNotification("Mouse_" + mouseSide + "_Down", getObject(e));
+				String inputSource = "Mouse_" + mouseSide + "_Down";
+				notifyInputAction(inputSource, makePositionObject(e));
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				String mouseSide = "";
+				long buttonPressedTime = 0;
 				switch(e.getButton()) {
 					case MouseEvent.BUTTON1:
 						mouseSide = "Left";
+						buttonPressedTime = leftPressedTime;
+						leftPressedTime = 0;
 						break;
 					case MouseEvent.BUTTON2:
+						mouseSide = "Center";
+						buttonPressedTime = centerPressedTime;
+						centerPressedTime = 0;
+						break;
+					case MouseEvent.BUTTON3:
 						mouseSide = "Right";
+						buttonPressedTime = rightPressedTime;
+						rightPressedTime = 0;
 						break;
 				}
-				Input.getSingeltonInput().actionNotification("Mouse_" + mouseSide + "_Up", getObject(e));
+				notifyInputAction("Mouse_" + mouseSide + "_Up", makePositionObject(e));
+				if(e.getWhen() - buttonPressedTime < 100) {
+					notifyInputAction("Mouse_" + mouseSide + "_ShortClick", makePositionObject(e));
+				}
+				if(e.getWhen() - buttonPressedTime > 400) {
+					notifyInputAction("Mouse_" + mouseSide + "_LongClick", makePositionObject(e));
+				}
+				if(lastPosition != null && lastPosition.distance(e.getPoint()) < 10 && e.getWhen() - lastClickTime < 200) {
+					notifyInputAction("Mouse_" + mouseSide + "_DoubleClick", makePositionObject(e));
+				}
+				lastPosition = e.getPoint();
+				lastClickTime = e.getWhen();
 			}
         });
 	}

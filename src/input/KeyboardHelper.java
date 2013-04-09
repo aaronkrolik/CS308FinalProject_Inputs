@@ -76,6 +76,6 @@ public class KeyboardHelper {
 			initialize();
 		if(keyMap.containsKey(key))
 			return keyMap.get(key);
-		return null;
+		return "Unknown";
 	}	
 }

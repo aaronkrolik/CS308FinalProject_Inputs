@@ -1,24 +1,32 @@
 package input;
 
-import java.util.HashMap;
-
-import javax.swing.JComponent;
+/**
+ * The inputDevice performs as the super class for different device modules
+ * 
+ * @author Ying Chen, Gavin Ovsak
+ * 
+ */
 
 public class InputDevice {
-	JComponent myFrame;
 	private String myName;
-	
-	HashMap<Integer, Command> keyPressedCommands = new HashMap<Integer, Command>();
-	HashMap<Integer, Command> keyReleasedCommands = new HashMap<Integer, Command>();
-	
-	public InputDevice(String name) {
+	private Input myInput;
+
+	public InputDevice(String name, Input input) {
 		myName = name;
+		myInput = input;
 	}
-	
-	public void setCommand(String[] actionIdentifiers, Command command) {
-	}
-	
+
 	public String getName() {
 		return myName;
+	}
+
+	/**
+	 * Send the input information to the input object
+	 * 
+	 * @param keyInfo
+	 * @param object
+	 */
+	public void notifyInputAction(String keyInfo, ActionObject object) {
+		myInput.actionNotification(keyInfo, object);
 	}
 }
