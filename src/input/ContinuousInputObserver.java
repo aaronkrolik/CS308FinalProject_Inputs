@@ -7,7 +7,6 @@ import java.util.Observable;
  * 
  * @author Ying Chen
  * 
- 
 public class ContinuousInputObserver extends InputObserver {
 	private final int continuousKeytimeLimit = 100;
 
