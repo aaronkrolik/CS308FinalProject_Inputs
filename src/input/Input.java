@@ -21,7 +21,7 @@ import javax.swing.JComponent;
 import examples.Player;
 
 /**
- * Singleton Input class to handle all sorts of input goodies behind the hood
+ * q Singleton Input class to handle all sorts of input goodies behind the hood
  * 
  * @author aaronkrolik
  * 
@@ -32,16 +32,25 @@ public class Input {
 
 	private final ResourceBundle RESOURCES;
 
-	List<WeakReference> myWeakReferences = new ArrayList<WeakReference>();
+	List<WeakReference> myWeakReferences = new ArrayList<WeakReference>(); // to
+																			// avoid
+																			// memory
+																			// leaks
 	Map<String, Method> keyToMethod = new HashMap<String, Method>();
 	Map<String, Object> keyToInstance = new HashMap<String, Object>();
-	ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); //still not sure if needed 
+	ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); // still
+																		// not
+																		// sure
+																		// if
+																		// needed
 
 	/**
 	 * (Convenience) Singleton constructor. I'm almost as ashamed as I am lazy
 	 * 
-	 * @param String shameful
-	 * @param JComponent hack
+	 * @param String
+	 *            shameful
+	 * @param JComponent
+	 *            hack
 	 * @return Input instance
 	 */
 	public static Input newSingletonInput(String resourcePath,
@@ -64,26 +73,31 @@ public class Input {
 
 	/**
 	 * Include input instance in our collection of instances that can have
-	 * annotated methods invoked
+	 * annotated methods invoked.
 	 * 
-	 * @param Object input. any object will do 
-	 * TODO handle overloaded methods. need incorporate the param field
-	 *            
+	 * @param Object
+	 *            input. any object will do TODO handle overloaded methods. need
+	 *            incorporate the param field
+	 * 
 	 */
 	public void addListenerTo(Object in) {
 		myWeakReferences.add(new WeakReference(in));
 		Class inputClass = in.getClass();
-		if (inputClass.getAnnotation(InputClassTarget.class) != null) {
-			for (Method method : inputClass.getMethods()) {
-				Annotation annotation = method
-						.getAnnotation(InputMethodTarget.class);
-				if (annotation instanceof InputMethodTarget) {
-					System.out.println("reflecting"
-							+ ((InputMethodTarget) annotation).name());
-					keyToMethod.put(((InputMethodTarget) annotation).name(),
-							method);
+		while (inputClass != Object.class) {
+			if (inputClass.getAnnotation(InputClassTarget.class) != null) {
+				for (Method method : inputClass.getMethods()) {
+					Annotation annotation = method
+							.getAnnotation(InputMethodTarget.class);
+					if (annotation instanceof InputMethodTarget) {
+						System.out.println("reflecting"
+								+ ((InputMethodTarget) annotation).name());
+						keyToMethod
+								.put(((InputMethodTarget) annotation).name(),
+										method);
+					}
 				}
 			}
+			inputClass=inputClass.getSuperclass();
 		}
 	}
 
@@ -91,7 +105,8 @@ public class Input {
 	 * Remove an instance from our cache. This means that it will not be called
 	 * even if it has relevant target
 	 * 
-	 * @param Object input (any type will do)
+	 * @param Object
+	 *            input (any type will do)
 	 */
 	public void removeListener(Object in) {
 		for (int i = 0; i < myWeakReferences.size(); i++) {
@@ -105,8 +120,7 @@ public class Input {
 
 	/**
 	 * Uses nifty methodObject and instance caches to reflexively invoke methods
-	 * TODO: get working with the methodInputs 
-	 * TODO: real exceptions ...
+	 * TODO: get working with the methodInputs TODO: real exceptions ...
 	 * 
 	 * @param key
 	 * @param in
@@ -131,12 +145,11 @@ public class Input {
 	}
 
 	/**
-	 * actionNotification aka massiveHack.
-	 * TODO: make less shitty.
+	 * actionNotification aka massiveHack. TODO: make less shitty.
 	 * 
 	 * @param action
 	 * @param object
-	 *        
+	 * 
 	 */
 	public void actionNotification(String action, ActionObject object) {
 		try {
