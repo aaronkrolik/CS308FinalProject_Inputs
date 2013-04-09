@@ -6,81 +6,87 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.JComponent;
 
-public class MouseModule extends InputDevice{
+public class MouseModule extends InputDevice {
 	JComponent myComponent;
 	public final String myDevice = "MOUSE";
 
 	long leftPressedTime = 0;
 	long rightPressedTime = 0;
 	long centerPressedTime = 0;
-	
+
 	Point lastPosition;
 	long lastClickTime = 0;
-		
-	public MouseModule(JComponent component, Input input){
-		super("MOUSE",input);
+
+	public MouseModule(JComponent component, Input input) {
+		super("MOUSE", input);
 		myComponent = component;
 		initialize();
 	}
-	
+
 	private PositionObject makePositionObject(MouseEvent e) {
-		return new PositionObject(e.getX()/myComponent.getWidth(), e.getY()/myComponent.getHeight(),e.getWhen());
+		return new PositionObject(e.getX() / myComponent.getWidth(), e.getY() / myComponent.getHeight(), e.getWhen());
 	}
 	
-	private void initialize(){
+
+		
+	
+
+	/**
+	 * Sets up single mouse listener. implements MouseMotionAdapter with mouseMove and MouseDrag
+	 */
+	private void initialize() {
 		myComponent.addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-            public void mouseMoved (MouseEvent e) {
+			public void mouseMoved(MouseEvent e) {
 				notifyInputAction("Mouse_Move", makePositionObject(e));
-            }
-            
-			@Override
-            public void mouseDragged (MouseEvent e) {
+			}
+			public void mouseDragged(MouseEvent e) {
 				notifyInputAction("Mouse_Drag", makePositionObject(e));
-            }
-        });
-        
+			}
+		});
+
 		myComponent.addMouseListener(new MouseListener() {
-        	@Override
+			@Override
 			public void mouseClicked(MouseEvent e) {
 				String mouseSide = "";
-				switch(e.getButton()) {
-					case MouseEvent.BUTTON1:
-						mouseSide = "Left";
-						break;
-					case MouseEvent.BUTTON2:
-						mouseSide = "Center";
-						break;
-					case MouseEvent.BUTTON3:
-						mouseSide = "Right";
-						break;
+				switch (e.getButton()) {
+				case MouseEvent.BUTTON1:
+					mouseSide = "Left";
+					break;
+				case MouseEvent.BUTTON2:
+					mouseSide = "Center";
+					break;
+				case MouseEvent.BUTTON3:
+					mouseSide = "Right";
+					break;
 				}
 				String inputSource = "Mouse_" + mouseSide + "_Click";
 				notifyInputAction(inputSource, makePositionObject(e));
-        	}
+			}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
 				String mouseSide = "";
-				switch(e.getButton()) {
-					case MouseEvent.BUTTON1:
-						mouseSide = "Left";
-						leftPressedTime = e.getWhen();
-						break;
-					case MouseEvent.BUTTON2:
-						mouseSide = "Center";
-						centerPressedTime = e.getWhen();
-						break;
-					case MouseEvent.BUTTON3:
-						mouseSide = "Right";
-						rightPressedTime = e.getWhen();
-						break;
+				switch (e.getButton()) {
+				case MouseEvent.BUTTON1:
+					mouseSide = "Left";
+					leftPressedTime = e.getWhen();
+					break;
+				case MouseEvent.BUTTON2:
+					mouseSide = "Center";
+					centerPressedTime = e.getWhen();
+					break;
+				case MouseEvent.BUTTON3:
+					mouseSide = "Right";
+					rightPressedTime = e.getWhen();
+					break;
 				}
 				String inputSource = "Mouse_" + mouseSide + "_Down";
 				notifyInputAction(inputSource, makePositionObject(e));
@@ -90,7 +96,8 @@ public class MouseModule extends InputDevice{
 			public void mouseReleased(MouseEvent e) {
 				String mouseSide = "";
 				long buttonPressedTime = 0;
-				switch(e.getButton()) {
+				switch (e.getButton()) {
+				
 					case MouseEvent.BUTTON1:
 						mouseSide = "Left";
 						buttonPressedTime = leftPressedTime;
@@ -105,21 +112,23 @@ public class MouseModule extends InputDevice{
 						mouseSide = "Right";
 						buttonPressedTime = rightPressedTime;
 						rightPressedTime = 0;
-						break;
+						break;	
 				}
+				
 				notifyInputAction("Mouse_" + mouseSide + "_Up", makePositionObject(e));
-				if(e.getWhen() - buttonPressedTime < 100) {
+				
+				if (e.getWhen() - buttonPressedTime < 100) {
 					notifyInputAction("Mouse_" + mouseSide + "_ShortClick", makePositionObject(e));
 				}
-				if(e.getWhen() - buttonPressedTime > 400) {
+				if (e.getWhen() - buttonPressedTime > 400) {
 					notifyInputAction("Mouse_" + mouseSide + "_LongClick", makePositionObject(e));
 				}
-				if(lastPosition != null && lastPosition.distance(e.getPoint()) < 10 && e.getWhen() - lastClickTime < 200) {
+				if (lastPosition != null && lastPosition.distance(e.getPoint()) < 10 && e.getWhen() - lastClickTime < 200) {
 					notifyInputAction("Mouse_" + mouseSide + "_DoubleClick", makePositionObject(e));
 				}
 				lastPosition = e.getPoint();
 				lastClickTime = e.getWhen();
 			}
-        });
+		});
 	}
 }

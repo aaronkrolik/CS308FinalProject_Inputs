@@ -17,7 +17,7 @@ import javax.swing.JComponent;
 public class KeyboardModule extends InputDevice{
 	JComponent myComponent;
 	public final String myDevice = "KEYBOARD";
-	
+
 	private class KeyState {
 		private String myName;
 		private long myTime;
@@ -25,16 +25,16 @@ public class KeyboardModule extends InputDevice{
 			myName = name;
 			myTime = time;
 		}
-		
+
 		public long getTime() {
 			return myTime;
 		}
-		
+
 		public String getName() {
 			return myName;
 		}
 	}
-	
+
 	ArrayList<KeyState> pressedKeys = new ArrayList<KeyState>();
 
 	public KeyboardModule(JComponent component, Input input) {
@@ -42,7 +42,7 @@ public class KeyboardModule extends InputDevice{
 		myComponent = component;
 		initialize();
 	}
-	
+
 	private void recurse(String accumulatedKeys, ArrayList<KeyState> keyArray, int maxSize, long time) {
 		if(maxSize == 0) {
 			notifyInputAction("Keyboard_" + accumulatedKeys + "_KeyDown", new AlertObject(time));
@@ -54,13 +54,13 @@ public class KeyboardModule extends InputDevice{
 			}
 		}
 	}
-	
+
 	private void initialize() {
 		myComponent.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				final String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
-				
+
 				boolean alreadyExists = false;
 				for(KeyState key : pressedKeys) {
 					if(key.getName().equals(keyName)) {
@@ -70,12 +70,12 @@ public class KeyboardModule extends InputDevice{
 				if(!alreadyExists)
 				{
 					pressedKeys.add(new KeyState(keyName, e.getWhen()));
-				
+
 					ArrayList<KeyState> buttonArray = (ArrayList<KeyState>) pressedKeys.clone();
-					
+
 					if(buttonArray.size() != 1)
 						notifyInputAction("Keyboard_" + keyName + "_KeyDown", new AlertObject(e.getWhen()));
-	
+
 					recurse("",buttonArray,buttonArray.size(), e.getWhen());
 				}
 			}
@@ -84,7 +84,7 @@ public class KeyboardModule extends InputDevice{
 			public void keyReleased(KeyEvent e) {
 				String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
 				notifyInputAction("Keyboard_" + keyName + "_KeyUp", new AlertObject(e.getWhen()));
-				
+
 				Set<KeyState> keysToRemove = new HashSet<KeyState>();
 				for(KeyState key : pressedKeys) {
 					if(key.getName().equals(keyName)) {

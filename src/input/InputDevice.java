@@ -3,11 +3,11 @@ package input;
 /**
  * The inputDevice performs as the super class for different device modules
  * 
- * @author Ying Chen, Gavin Ovsak
+ * @author Ying Chen, Gavin Ovsak, aaronkrolik
  * 
  */
 
-public class InputDevice {
+public abstract class InputDevice {
 	private String myName;
 	private Input myInput;
 
@@ -26,7 +26,9 @@ public class InputDevice {
 	 * @param keyInfo
 	 * @param object
 	 */
-	public void notifyInputAction(String keyInfo, ActionObject object) {
-		myInput.actionNotification(keyInfo, object);
+	protected void notifyInputAction(String info, ActionObject object) {
+		System.out.println(info);
+		myInput.actionNotification(info, object);
 	}
+	
 }

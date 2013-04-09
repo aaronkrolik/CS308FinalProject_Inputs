@@ -30,7 +30,7 @@ public class Input {
 
 	public Input(String resourcePath, JComponent component) {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
-		inputDevices.add(new KeyboardModule(component, this));
+		inputDevices.add(new RefacKeyboardModule(component, this));
 		inputDevices.add(new MouseModule(component, this));
 	}
 
