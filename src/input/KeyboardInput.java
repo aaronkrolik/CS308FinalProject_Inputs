@@ -37,7 +37,22 @@ public class KeyboardInput extends InputDevice{
 			}
 		}
 	}
-
+	
+	private void recursiveCombination(ArrayList<KeyState> keyArray, long time, KeyState commonKey) {
+		//for each thing, take it out and add keyName and permute it
+		//for each of those things, take each one out and permute it
+		//smaller sized permuations that all include the latest button
+		if(keyArray.size() > 1) {
+			for(int i = 0; i < keyArray.size(); i++) {
+				ArrayList<KeyState> modArray = (ArrayList<KeyState>) keyArray.clone();
+				modArray.remove(i);
+				recursiveCombination(modArray, time, commonKey);
+				modArray.add(commonKey);
+				recursivePermutation("", modArray, modArray.size(), time);
+			}
+		}
+	}
+	
 	private void initialize(JComponent component) {
 		component.addKeyListener(new KeyListener() {
 			
@@ -46,6 +61,9 @@ public class KeyboardInput extends InputDevice{
 				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
 				KeyState downKey = new KeyState( keyName, e.getWhen());
 				if (!myKeys.contains(downKey)){
+					if(myKeys.size() > 1) {
+						recursiveCombination(myKeys, e.getWhen(), downKey);
+					}
 					myKeys.add(downKey);
 				}
 				ArrayList<KeyState> buttonArray = (ArrayList<KeyState>) myKeys.clone();
