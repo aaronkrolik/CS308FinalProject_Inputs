@@ -22,39 +22,38 @@ import javax.swing.JComponent;
 @SuppressWarnings("rawtypes")
 public class Input {
 
-	private final ResourceBundle RESOURCES;
-
 	private List<WeakReference> myWeakReferences = new ArrayList<WeakReference>();
 	private Map<String, Method> keyToMethod = new HashMap<String, Method>();
 	private Map<String, Object> keyToInstance = new HashMap<String, Object>();
 	private ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); //still not sure if needed 
+	private Map<String, String> dynamicMapping = new HashMap<String, String>();
+	
+	private final ResourceBundle RESOURCES;
 	private static ResourceBundle SETTINGS;
 	private static ResourceBundle DEFAULT_SETTINGS;
-	private Map<String, String> dynamicMapping = new HashMap<String, String>();
-
+	
 	public Input(String resourcePath, JComponent component) {
-		
-		
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
 		inputDevices.add(new KeyboardInput(component, this));
 		inputDevices.add(new MouseInput(component, this));
 		DEFAULT_SETTINGS = ResourceBundle.getBundle("input/DefaultSettings");
 	}
 	
-	public void overrideSettings(String resourcePath){
-		SETTINGS = ResourceBundle.getBundle(resourcePath);
+	/**
+	 * put new key/values in our dynaicMapping object
+	 * @param inputBehavior
+	 * @param gameBehavior
+	 */
+	public void setMapping(String inputBehavior, String gameBehavior) {
+		dynamicMapping.put(inputBehavior, gameBehavior);
 	}
 
-	public String getSetting(String in){
-		try{
-			if(SETTINGS != null) {
-				return SETTINGS.getString(in);
-			} else {
-				return DEFAULT_SETTINGS.getString(in);
-			}
-		} catch (MissingResourceException e) {
-			return DEFAULT_SETTINGS.getString(in);
-		}
+	/**
+	 * Override our default input settings
+	 * @param String resourcePath is the relative location to the settings resource file
+	 */
+	public void overrideSettings(String resourcePath){
+		SETTINGS = ResourceBundle.getBundle(resourcePath);
 	}
 
 	/**
@@ -72,11 +71,9 @@ public class Input {
 		while (inputClass != Object.class){
 			if (inputClass.getAnnotation(InputClassTarget.class) != null) {
 				for (Method method : inputClass.getMethods()) {
-					Annotation annotation = method
-							.getAnnotation(InputMethodTarget.class);
+					Annotation annotation = method.getAnnotation(InputMethodTarget.class);
 					if (annotation instanceof InputMethodTarget) {
-						keyToMethod.put(((InputMethodTarget) annotation).name(),
-								method);
+						keyToMethod.put(((InputMethodTarget) annotation).name(),method);
 					}
 				}
 			}
@@ -96,15 +93,53 @@ public class Input {
 			}
 		}
 	}
+	
+	/**
+	 * Get a setting from our SETTINGS resource file object
+	 * 
+	 * @param String key in
+	 * @return String value out
+	 */
+	protected String getSetting(String in){
+		try{
+			if(SETTINGS != null) {
+				return SETTINGS.getString(in);
+			} else {
+				return DEFAULT_SETTINGS.getString(in);
+			}
+		} catch (MissingResourceException e) {
+			return DEFAULT_SETTINGS.getString(in);
+		}
+	}
 
 	/**
+	 * Notification receiver from input devices
+	 * TODO better exception handling
+	 * @param String action (key for dynamicMapping)
+	 * @param AlertObject object (input state and specifics)
+	 */
+	void actionNotification(String action, AlertObject object) {
+		System.out.println(action);
+		try {
+			if(dynamicMapping.containsKey(action)) {
+				execute(dynamicMapping.get(action), object);
+			} else if(RESOURCES.containsKey(action)) {
+				execute(RESOURCES.getString(action), object);
+			}
+		} catch (NullPointerException e) {
+			System.out.println("Null Pointer Exception");
+		} catch (MissingResourceException e){
+			System.out.println("Missing Resource Exception! Resources did not contain: " + action);
+		}
+	}
+	
+	/**
 	 * Executes methods using reflection
-	 * TODO: Better exception handling
-	 * 
+	 * TODO: Only communists catch exceptions 
 	 * @param key
 	 * @param in
 	 */
-	public void execute(String key, AlertObject in) {
+	private void execute(String key, AlertObject in) {
 		for (WeakReference x : myWeakReferences) {
 			try {
 				Class[] paramClasses = keyToMethod.get(key).getParameterTypes();
@@ -118,30 +153,5 @@ public class Input {
 		}
 	}
 	
-	public void setMapping(String inputBehavior, String gameBehavior) {
-		dynamicMapping.put(inputBehavior, gameBehavior);
-	}
-	
-	/**
-	 * Notification receiver from input devices
-	 * 
-	 * @param action
-	 * @param object
-	 */
-	public void actionNotification(String action, AlertObject object) {
-		System.out.println(action);
-		try {
-			if(dynamicMapping.containsKey(action)) {
-				execute(dynamicMapping.get(action), object);
-			} else if(RESOURCES.containsKey(action)) {
-				execute(RESOURCES.getString(action), object);
-			}
-		} catch (NullPointerException e) {
-			System.out.println("Null Pointer Exception");
-		} catch (MissingResourceException e){
-			System.out.println("Missing Resource Exception! Resources did not contain: " + action);
-		}
-		
-	}
 }
 
