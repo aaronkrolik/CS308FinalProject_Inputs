@@ -15,35 +15,36 @@ import javax.swing.JComponent;
 
 /**
  * KeyboardModule gets input info from keyboard and send appropriate input info to the Input object
- * @author Ying Chen, Gavin Ovsak
+ * @author Ying Chen, Gavin Ovsak, aarokrolik
  *
  */
 @SuppressWarnings("unchecked")
 public class RefacKeyboardModule extends InputDevice{
+	
 	JComponent myComponent;
 	public static final String myDevice = "KEYBOARD";
-	ArrayList<KeyState> myPressedKeys;
 	List<KeyState> myKeys;
 	
 	private class KeyState implements Comparable{
 		public final String myName;
 		public final long myTime;
-
 		
 		public KeyState(String name, long time)  {
 			myName = name;
 			myTime = time;
 		}
+		
 		public String toString(){
 			return myName;
 		}
-
+		
 		public boolean equals(Object in){
 			if(in instanceof KeyState){
 				return ( myName.equals(((KeyState) in).myName)  );
 			}
 			return false;
 		}
+		
 		public int hashCode(){
 			return myName.hashCode();
 		}
@@ -53,10 +54,7 @@ public class RefacKeyboardModule extends InputDevice{
 				return (int) (((KeyState) in).myTime - myTime);
 			}
 			return 0;
-		}
-
-	
-		
+		}	
 	}
 	
 	
@@ -64,7 +62,6 @@ public class RefacKeyboardModule extends InputDevice{
 	public RefacKeyboardModule(JComponent component, Input input) {
 		super(myDevice,input);
 		myComponent = component;
-		myPressedKeys = new ArrayList<KeyState>();
 		myKeys = new ArrayList<KeyState>();
 		initialize();
 	}
@@ -81,7 +78,6 @@ public class RefacKeyboardModule extends InputDevice{
 		        for (int i = 0; i < n; i++)
 		           recursivePermutation(prefix + str.charAt(i), str.substring(0, i) + str.substring(i+1, n), time);
 		    }
-
 		}
 	
 	private void initialize() {
