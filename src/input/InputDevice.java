@@ -33,6 +33,8 @@ public abstract class InputDevice {
 			return SETTINGS.getString(in);
 		} catch (MissingResourceException e) {
 			return "";
+		} catch (NullPointerException e){
+			return "";
 		}
 	}
 
