@@ -119,13 +119,13 @@ public class MouseInput extends InputDevice {
 				
 				notifyInputAction("Mouse_" + mouseSide + "_Up", makePositionObject(e));
 				
-				if (e.getWhen() - buttonPressedTime < myInput.getShortClickTimeThreshold()) {
+				if (e.getWhen() - buttonPressedTime < Integer.parseInt(InputDevice.getSetting("ShortClickTimeThreshold"))) {
 					notifyInputAction("Mouse_" + mouseSide + "_ShortClick", makePositionObject(e));
 				}
-				if (e.getWhen() - buttonPressedTime > myInput.getLongClickTimeThreshold()) {
+				if (e.getWhen() - buttonPressedTime > Integer.parseInt(InputDevice.getSetting("LongClickTimeThreshold"))) {
 					notifyInputAction("Mouse_" + mouseSide + "_LongClick", makePositionObject(e));
 				}
-				if (lastPosition != null && lastPosition.distance(e.getPoint()) < myInput.getDoubleClickDistanceThreshold() && e.getWhen() - lastClickTime < myInput.getDoubleClickTimeThreshold()) {
+				if (lastPosition != null && lastPosition.distance(e.getPoint()) < Integer.parseInt(InputDevice.getSetting("DoubleClickDistanceThreshold")) && e.getWhen() - lastClickTime < Integer.parseInt(InputDevice.getSetting("DoubleClickDistanceThreshold")))  {
 					notifyInputAction("Mouse_" + mouseSide + "_DoubleClick", makePositionObject(e));
 				}
 				lastPosition = e.getPoint();

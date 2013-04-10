@@ -1,5 +1,8 @@
 package input;
 
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 /**
  * The inputDevice performs as the super class for different device modules
  * 
@@ -10,6 +13,7 @@ package input;
 public abstract class InputDevice {
 	private String myName;
 	private Input myInput;
+	private static ResourceBundle SETTINGS;
 
 	public InputDevice(String name, Input input) {
 		myName = name;
@@ -18,6 +22,18 @@ public abstract class InputDevice {
 
 	public String getName() {
 		return myName;
+	}
+	
+	protected void setSettings(ResourceBundle in){
+		SETTINGS = in;
+	}
+	
+	protected static String getSetting(String in){
+		try{
+			return SETTINGS.getString(in);
+		} catch (MissingResourceException e) {
+			return "";
+		}
 	}
 
 	/**

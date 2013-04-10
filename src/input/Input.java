@@ -22,10 +22,6 @@ import javax.swing.JComponent;
 @SuppressWarnings("rawtypes")
 public class Input {
 
-	private int shortClickTimeThreshold = 100;
-	private int longClickTimeThreshold = 400;
-	private int doubleClickTimeThreshold = 200;
-	private int doubleClickDistanceThreshold = 10;
 
 	private final ResourceBundle RESOURCES;
 
@@ -38,6 +34,10 @@ public class Input {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
 		inputDevices.add(new KeyboardInput(component, this));
 		inputDevices.add(new MouseInput(component, this));
+	}
+	
+	public void SetDefualts(String resourcePath){
+		
 	}
 
 	/**
@@ -101,37 +101,7 @@ public class Input {
 		}
 	}
 	
-	public int getShortClickTimeThreshold() {
-		return shortClickTimeThreshold;
-	}
-
-	public int getLongClickTimeThreshold() {
-		return longClickTimeThreshold;
-	}
-
-	public int getDoubleClickTimeThreshold() {
-		return doubleClickTimeThreshold;
-	}
-
-	public int getDoubleClickDistanceThreshold() {
-		return doubleClickDistanceThreshold;
-	}
-
-	public void setShortClickTimeThreshold(int threshold) {
-		shortClickTimeThreshold = threshold;
-	}
-
-	public void setLongClickTimeThreshold(int threshold) {
-		longClickTimeThreshold = threshold;
-	}
-
-	public void setDoubleClickTimeThreshold(int threshold) {
-		doubleClickTimeThreshold = threshold;
-	}
-
-	public void setDoubleClickDistanceThreshold(int threshold) {
-		doubleClickDistanceThreshold = threshold;
-	}
+	
 
 	/**
 	 * Notification receiver from input devices
@@ -140,7 +110,6 @@ public class Input {
 	 * @param object
 	 */
 	public void actionNotification(String action, ActionObject object) {
-		System.out.println(action);
 		try {
 			if(RESOURCES.containsKey(action))
 				execute(RESOURCES.getString(action), object);

@@ -61,15 +61,15 @@ public class KeyboardInput extends InputDevice{
 				long timeDifference = temp.getTime() - myKeys.remove(myKeys.indexOf(temp)).getTime();
 				notifyInputAction("Keyboard_" + keyName + "_KeyUp",
 							new AlertObject(e.getWhen()));
-				if (timeDifference < myInput.getShortClickTimeThreshold()) {
+				if (timeDifference < Integer.parseInt(InputDevice.getSetting("ShortClickTimeThreshold")) ) {
 					notifyInputAction("Keyboard_" + keyName + "_ShortClick",
 							new AlertObject(e.getWhen()));
 				}
-				if (timeDifference >= myInput.getLongClickTimeThreshold()) {
+				if (timeDifference >= Integer.parseInt(InputDevice.getSetting("LongClickTimeThreshold"))) {
 					notifyInputAction("Keyboard_" + keyName + "_LongClick",
 							new AlertObject(e.getWhen()));
 				}
-				if (e.getWhen() - lastClickTime < myInput.getDoubleClickTimeThreshold()) {
+				if (e.getWhen() - lastClickTime < Integer.parseInt(InputDevice.getSetting("DoubleClickTimeThreshold"))) {
 					notifyInputAction("Keyboard_" + keyName + "_DoubleClick", new AlertObject(e.getWhen()));
 				}
 				lastClickTime = e.getWhen();
