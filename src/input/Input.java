@@ -22,6 +22,11 @@ import javax.swing.JComponent;
 @SuppressWarnings("rawtypes")
 public class Input {
 
+	private int shortClickTimeThreshold = 100;
+	private int longClickTimeThreshold = 400;
+	private int doubleClickTimeThreshold = 200;
+	private int doubleClickDistanceThreshold = 10;
+
 	private final ResourceBundle RESOURCES;
 
 	List<WeakReference> myWeakReferences = new ArrayList<WeakReference>();
@@ -94,6 +99,38 @@ public class Input {
 			} catch (NullPointerException e) {
 			}
 		}
+	}
+	
+	public int getShortClickTimeThreshold() {
+		return shortClickTimeThreshold;
+	}
+
+	public int getLongClickTimeThreshold() {
+		return longClickTimeThreshold;
+	}
+
+	public int getDoubleClickTimeThreshold() {
+		return doubleClickTimeThreshold;
+	}
+
+	public int getDoubleClickDistanceThreshold() {
+		return doubleClickDistanceThreshold;
+	}
+
+	public void setShortClickTimeThreshold(int threshold) {
+		shortClickTimeThreshold = threshold;
+	}
+
+	public void setLongClickTimeThreshold(int threshold) {
+		longClickTimeThreshold = threshold;
+	}
+
+	public void setDoubleClickTimeThreshold(int threshold) {
+		doubleClickTimeThreshold = threshold;
+	}
+
+	public void setDoubleClickDistanceThreshold(int threshold) {
+		doubleClickDistanceThreshold = threshold;
 	}
 
 	/**

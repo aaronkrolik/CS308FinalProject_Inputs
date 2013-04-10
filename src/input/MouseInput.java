@@ -16,11 +16,13 @@ public class MouseInput extends InputDevice {
 
 	Point lastPosition;
 	long lastClickTime = 0;
+	Input myInput;
 
 	public MouseInput(JComponent component, Input input) {
 		super("MOUSE", input);
 		myComponent = component;
 		initialize();
+		myInput = input;
 	}
 
 	private PositionObject makePositionObject(MouseEvent e) {
@@ -117,13 +119,13 @@ public class MouseInput extends InputDevice {
 				
 				notifyInputAction("Mouse_" + mouseSide + "_Up", makePositionObject(e));
 				
-				if (e.getWhen() - buttonPressedTime < 100) {
+				if (e.getWhen() - buttonPressedTime < myInput.getShortClickTimeThreshold()) {
 					notifyInputAction("Mouse_" + mouseSide + "_ShortClick", makePositionObject(e));
 				}
-				if (e.getWhen() - buttonPressedTime > 400) {
+				if (e.getWhen() - buttonPressedTime > myInput.getLongClickTimeThreshold()) {
 					notifyInputAction("Mouse_" + mouseSide + "_LongClick", makePositionObject(e));
 				}
-				if (lastPosition != null && lastPosition.distance(e.getPoint()) < 10 && e.getWhen() - lastClickTime < 200) {
+				if (lastPosition != null && lastPosition.distance(e.getPoint()) < myInput.getDoubleClickDistanceThreshold() && e.getWhen() - lastClickTime < myInput.getDoubleClickTimeThreshold()) {
 					notifyInputAction("Mouse_" + mouseSide + "_DoubleClick", makePositionObject(e));
 				}
 				lastPosition = e.getPoint();

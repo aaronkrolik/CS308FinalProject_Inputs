@@ -16,11 +16,14 @@ public class KeyboardInput extends InputDevice{
 
 	public static final String myDevice = "KEYBOARD";
 	ArrayList<KeyState> myKeys;
+	Input myInput;
+	long lastClickTime = 0;
 	
 	public KeyboardInput(JComponent component, Input input) {
 		super(myDevice,input);
 		myKeys = new ArrayList<KeyState>();
 		initialize(component);
+		myInput = input;
 	}
 
 	private void recursivePermutation(String accumulatedKeys, ArrayList<KeyState> keyArray, int maxSize, long time) {
@@ -58,14 +61,18 @@ public class KeyboardInput extends InputDevice{
 				long timeDifference = temp.getTime() - myKeys.remove(myKeys.indexOf(temp)).getTime();
 				notifyInputAction("Keyboard_" + keyName + "_KeyUp",
 							new AlertObject(e.getWhen()));
-				if (timeDifference < 100) {
+				if (timeDifference < myInput.getShortClickTimeThreshold()) {
 					notifyInputAction("Keyboard_" + keyName + "_ShortClick",
 							new AlertObject(e.getWhen()));
 				}
-				if (timeDifference >= 400) {
+				if (timeDifference >= myInput.getLongClickTimeThreshold()) {
 					notifyInputAction("Keyboard_" + keyName + "_LongClick",
 							new AlertObject(e.getWhen()));
 				}
+				if (e.getWhen() - lastClickTime < myInput.getDoubleClickTimeThreshold()) {
+					notifyInputAction("Keyboard_" + keyName + "_DoubleClick", new AlertObject(e.getWhen()));
+				}
+				lastClickTime = e.getWhen();
 			}
 
 			@Override
