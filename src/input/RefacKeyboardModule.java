@@ -51,20 +51,20 @@ public class RefacKeyboardModule extends InputDevice{
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				KeyState downKey = new KeyState( KeyboardMappings.getKeyName(e.getKeyCode()), e.getWhen());
 				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
+				KeyState downKey = new KeyState( keyName, e.getWhen());
 				if (!myKeys.contains(downKey)){
 					myKeys.add(downKey);
-				}	
+				}
 				notifyInputAction("Keyboard_" + keyName + "_KeyDown", new AlertObject(e.getWhen()));
 				recursivePermutation("", myKeys.toString().replace(", ", "").replace("[", "").replace("]", ""), e.getWhen() );
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				KeyState temp = new KeyState( KeyboardMappings.getKeyName(e.getKeyCode()), e.getWhen());
-				long timeDifference = temp.myTime - myKeys.remove(myKeys.indexOf(temp)).myTime;
 				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
+				KeyState temp = new KeyState(keyName, e.getWhen());
+				long timeDifference = temp.myTime - myKeys.remove(myKeys.indexOf(temp)).myTime;
 				notifyInputAction("Keyboard_" + keyName + "_KeyUp",
 							new AlertObject(e.getWhen()));
 				if (timeDifference < 100) {

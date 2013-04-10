@@ -69,7 +69,6 @@ public class Player extends Sprite {
 
 	public void setAntiCheating(boolean isAntiCheating) {
 		this.isAntiCheating = isAntiCheating;
-		
 	}
 
 	public void update(double time, double cameraPosition) {
