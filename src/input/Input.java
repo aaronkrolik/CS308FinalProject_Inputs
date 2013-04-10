@@ -28,12 +28,12 @@ public class Input {
 	private ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); /** still not sure if needed. abk **/
 	private Map<String, String> dynamicMapping = new HashMap<String, String>(); /** not the biggest fan. abk **/
 	
-	private final ResourceBundle RESOURCES;
+	private ResourceBundle MAPPINGRESOURCE;
 	private static ResourceBundle SETTINGS;
 	private static ResourceBundle DEFAULT_SETTINGS;
 	
 	public Input(String resourcePath, JComponent component) {
-		RESOURCES = ResourceBundle.getBundle(resourcePath);
+		setMappingResource(resourcePath);
 		DEFAULT_SETTINGS = ResourceBundle.getBundle("input/DefaultSettings");
 		
 		inputDevices.add(new KeyboardInput(component, this));
@@ -50,6 +50,13 @@ public class Input {
 	 */
 	public void setMapping(String inputBehavior, String gameBehavior) {
 		dynamicMapping.put(inputBehavior, gameBehavior);
+	}
+	/**
+	 * populate RESOURCES with resource file at path
+	 * @param path to resource file
+	 */
+	public void setMappingResource(String path){
+		MAPPINGRESOURCE = ResourceBundle.getBundle(path);
 	}
 
 	/**
@@ -128,8 +135,8 @@ public class Input {
 		try {
 			if(dynamicMapping.containsKey(action)) {
 				execute(dynamicMapping.get(action), object);
-			} else if(RESOURCES.containsKey(action)) {
-				execute(RESOURCES.getString(action), object);
+			} else if(MAPPINGRESOURCE.containsKey(action)) {
+				execute(MAPPINGRESOURCE.getString(action), object);
 			}
 		} catch (NullPointerException e) {
 			System.out.println("Null Pointer Exception");
