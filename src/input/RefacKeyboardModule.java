@@ -21,7 +21,7 @@ import javax.swing.JComponent;
 @SuppressWarnings("unchecked")
 public class RefacKeyboardModule extends InputDevice{
 	
-	
+
 	public static final String myDevice = "KEYBOARD";
 	List<KeyState> myKeys;
 	
@@ -65,6 +65,8 @@ public class RefacKeyboardModule extends InputDevice{
 				KeyState temp = new KeyState( KeyboardMappings.getKeyName(e.getKeyCode()), e.getWhen());
 				long timeDifference = temp.myTime - myKeys.remove(myKeys.indexOf(temp)).myTime;
 				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
+				notifyInputAction("Keyboard_" + keyName + "_KeyUp",
+							new AlertObject(e.getWhen()));
 				if (timeDifference < 100) {
 					notifyInputAction("Keyboard_" + keyName + "_ShortClick",
 							new AlertObject(e.getWhen()));
@@ -100,5 +102,6 @@ public class RefacKeyboardModule extends InputDevice{
 			}
 			return false;
 		}
+	
 	}
 }
