@@ -3,50 +3,39 @@ package input;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.swing.JComponent;
 
 /**
  * KeyboardModule gets input info from keyboard and send appropriate input info to the Input object
- * @author Ying Chen, Gavin Ovsak, aarokrolik
+ * @author Ying Chen, Gavin Ovsak, aaronkrolik
  *
  */
 @SuppressWarnings("unchecked")
-public class RefacKeyboardModule extends InputDevice{
-	
+public class KeyboardInput extends InputDevice{
 
 	public static final String myDevice = "KEYBOARD";
-	List<KeyState> myKeys;
+	ArrayList<KeyState> myKeys;
 	
-	public RefacKeyboardModule(JComponent component, Input input) {
+	public KeyboardInput(JComponent component, Input input) {
 		super(myDevice,input);
 		myKeys = new ArrayList<KeyState>();
 		initialize(component);
 	}
-	/**
-	 * taken from stack overflow
-	 * @param prefix
-	 * @param str
-	 * @param time
-	 */
-	 private void recursivePermutation(String prefix, String str, long time) {
-		    int n = str.length();
-		    if (n == 0) notifyInputAction("Keyboard_" + prefix + "_KeyDown", new AlertObject(time));
-		    else {
-		        for (int i = 0; i < n; i++)
-		           recursivePermutation(prefix + str.charAt(i), str.substring(0, i) + str.substring(i+1, n), time);
-		    }
+
+	private void recursivePermutation(String accumulatedKeys, ArrayList<KeyState> keyArray, int maxSize, long time) {
+		if(maxSize == 0) {
+			notifyInputAction("Keyboard_" + accumulatedKeys + "_KeyDown", new AlertObject(time));
+		} else {
+			for(KeyState key : keyArray) {
+				ArrayList<KeyState> modArray = (ArrayList<KeyState>) keyArray.clone();
+				modArray.remove(key);
+				recursivePermutation(key.toString() + accumulatedKeys, modArray, maxSize - 1, time);
+			}
 		}
-	
+	}
+
 	private void initialize(JComponent component) {
-		
 		component.addKeyListener(new KeyListener() {
 			
 			@Override
@@ -56,15 +45,17 @@ public class RefacKeyboardModule extends InputDevice{
 				if (!myKeys.contains(downKey)){
 					myKeys.add(downKey);
 				}
-				notifyInputAction("Keyboard_" + keyName + "_KeyDown", new AlertObject(e.getWhen()));
-				recursivePermutation("", myKeys.toString().replace(", ", "").replace("[", "").replace("]", ""), e.getWhen() );
+				ArrayList<KeyState> buttonArray = (ArrayList<KeyState>) myKeys.clone();
+				if(buttonArray.size() > 1)
+					notifyInputAction("Keyboard_" + keyName + "_KeyDown", new AlertObject(e.getWhen()));
+				recursivePermutation("", buttonArray, buttonArray.size(), e.getWhen());
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
 				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
 				KeyState temp = new KeyState(keyName, e.getWhen());
-				long timeDifference = temp.myTime - myKeys.remove(myKeys.indexOf(temp)).myTime;
+				long timeDifference = temp.getTime() - myKeys.remove(myKeys.indexOf(temp)).getTime();
 				notifyInputAction("Keyboard_" + keyName + "_KeyUp",
 							new AlertObject(e.getWhen()));
 				if (timeDifference < 100) {
@@ -84,8 +75,8 @@ public class RefacKeyboardModule extends InputDevice{
 	}
 	
 	private class KeyState{
-		public final String myName;
-		public final long myTime;
+		private final String myName;
+		private final long myTime;
 		
 		public KeyState(String name, long time)  {
 			myName = name;
@@ -94,6 +85,10 @@ public class RefacKeyboardModule extends InputDevice{
 		
 		public String toString(){
 			return myName;
+		}
+		
+		public long getTime() {
+			return myTime;
 		}
 	
 		public boolean equals(Object in){

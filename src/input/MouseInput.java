@@ -6,7 +6,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.JComponent;
 
-public class MouseModule extends InputDevice {
+public class MouseInput extends InputDevice {
 	JComponent myComponent;
 	public final String myDevice = "MOUSE";
 
@@ -17,7 +17,7 @@ public class MouseModule extends InputDevice {
 	Point lastPosition;
 	long lastClickTime = 0;
 
-	public MouseModule(JComponent component, Input input) {
+	public MouseInput(JComponent component, Input input) {
 		super("MOUSE", input);
 		myComponent = component;
 		initialize();

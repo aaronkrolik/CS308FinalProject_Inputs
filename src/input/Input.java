@@ -5,7 +5,6 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +31,8 @@ public class Input {
 
 	public Input(String resourcePath, JComponent component) {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
-		inputDevices.add(new RefacKeyboardModule(component, this));
-		inputDevices.add(new MouseModule(component, this));
+		inputDevices.add(new KeyboardInput(component, this));
+		inputDevices.add(new MouseInput(component, this));
 	}
 
 	/**
