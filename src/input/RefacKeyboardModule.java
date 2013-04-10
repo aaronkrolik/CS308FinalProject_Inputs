@@ -68,20 +68,24 @@ public class RefacKeyboardModule extends InputDevice{
 		myKeys = new ArrayList<KeyState>();
 		initialize();
 	}
-	
-//	private void recurse(String accumulatedKeys, ArrayList<KeyState> keyArray, int maxSize, long time) {
-//		if(maxSize == 0) {
-//			notifyInputAction("Keyboard_" + accumulatedKeys + "_KeyDown", new AlertObject(time));
-//		} else {
-//			for(KeyState key : keyArray) {
-//				ArrayList<KeyState> modArray = (ArrayList<KeyState>) keyArray.clone();
-//				modArray.remove(key);
-//				recurse(key.getName() + accumulatedKeys, modArray, maxSize - 1, time);
-//			}
-//		}
-//	}
+	/**
+	 * taken from stack overflow
+	 * @param prefix
+	 * @param str
+	 * @param time
+	 */
+	 private void recursivePermutation(String prefix, String str, long time) {
+		    int n = str.length();
+		    if (n == 0) notifyInputAction("Keyboard_" + prefix + "_KeyDown", new AlertObject(time));
+		    else {
+		        for (int i = 0; i < n; i++)
+		           recursivePermutation(prefix + str.charAt(i), str.substring(0, i) + str.substring(i+1, n), time);
+		    }
+
+		}
 	
 	private void initialize() {
+		
 		myComponent.addKeyListener(new KeyListener() {
 			
 			@Override
@@ -90,26 +94,9 @@ public class RefacKeyboardModule extends InputDevice{
 				String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
 				if (!myKeys.contains(downKey)){
 					myKeys.add(downKey);
-				}
+				}	
 				notifyInputAction("Keyboard_" + keyName + "_KeyDown", new AlertObject(e.getWhen()));
-
-				
-//				boolean alreadyExists = false;
-				
-//				for(KeyState key : myPressedKeys) {
-//					if(key.getName().equals(keyName)) {
-//						alreadyExists = true;
-//					}
-//				}
-				
-//				if(!alreadyExists){
-//					myPressedKeys.add(new KeyState(keyName, e.getWhen()));
-//					ArrayList<KeyState> buttonArray = (ArrayList<KeyState>) myPressedKeys.clone();
-//					if(buttonArray.size() != 1){
-//						notifyInputAction("Keyboard_" + keyName + "_KeyDown", new AlertObject(e.getWhen()));
-//					}
-//					recurse("",buttonArray,buttonArray.size(), e.getWhen());
-//				}
+				recursivePermutation("", myKeys.toString().replace(", ", "").replace("[", "").replace("]", ""), e.getWhen() );
 			}
 
 			@Override
@@ -125,27 +112,6 @@ public class RefacKeyboardModule extends InputDevice{
 					notifyInputAction("Keyboard_" + keyName + "_LongClick",
 							new AlertObject(e.getWhen()));
 				}
-				
-				
-//				String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
-//				notifyInputAction("Keyboard_" + keyName + "_KeyUp", new AlertObject(e.getWhen()));
-//				
-//				Set<KeyState> keysToRemove = new HashSet<KeyState>();
-//				for(KeyState key : myPressedKeys) {
-//					if(key.getName().equals(keyName)) {
-//						long timeDifference = e.getWhen() - key.getTime();
-//						if(timeDifference < 100) {
-//							notifyInputAction("Keyboard_" + keyName + "_ShortClick", new AlertObject(e.getWhen()));
-//						}
-//						if(timeDifference >= 400) {
-//							notifyInputAction("Keyboard_" + keyName + "_LongClick", new AlertObject(e.getWhen()));
-//						}
-//						keysToRemove.add(key);
-//					}
-//				}
-//				for(KeyState key : keysToRemove) {
-//					myPressedKeys.remove(key);
-//				}
 			}
 
 			@Override

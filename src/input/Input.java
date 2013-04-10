@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
@@ -31,12 +32,8 @@ public class Input {
 
 	public Input(String resourcePath, JComponent component) {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
-		inputDevices.add(new KeyboardModule(component, this));
+		inputDevices.add(new RefacKeyboardModule(component, this));
 		inputDevices.add(new MouseModule(component, this));
-		Enumeration<String> x  = RESOURCES.getKeys();
-		while(x.hasMoreElements()){
-			System.out.println(x.nextElement());
-		}
 	}
 
 	/**
@@ -107,14 +104,15 @@ public class Input {
 	 * @param object
 	 */
 	public void actionNotification(String action, ActionObject object) {
-		
 		try {
 			if(RESOURCES.containsKey(action))
-				System.out.println(action);
 				execute(RESOURCES.getString(action), object);
 		} catch (NullPointerException e) {
 			System.out.println("Null Pointer Exception");
+		} catch (MissingResourceException e){
+			System.out.println("Missing Resource Exception! Resources did not contain: " + action);
 		}
+		
 	}
 }
 
