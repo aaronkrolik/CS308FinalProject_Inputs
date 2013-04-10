@@ -21,39 +21,14 @@ import javax.swing.JComponent;
 @SuppressWarnings("unchecked")
 public class RefacKeyboardModule extends InputDevice{
 	
-	JComponent myComponent;
+	
 	public static final String myDevice = "KEYBOARD";
 	List<KeyState> myKeys;
 	
-	private class KeyState{
-		public final String myName;
-		public final long myTime;
-		
-		public KeyState(String name, long time)  {
-			myName = name;
-			myTime = time;
-		}
-		
-		public String toString(){
-			return myName;
-		}
-	
-		public boolean equals(Object in){
-			if(in instanceof KeyState){
-				return ( myName.equals(((KeyState) in).myName)  );
-			}
-			return false;
-		}
-	
-	}
-	
-	
-
 	public RefacKeyboardModule(JComponent component, Input input) {
 		super(myDevice,input);
-		myComponent = component;
 		myKeys = new ArrayList<KeyState>();
-		initialize();
+		initialize(component);
 	}
 	/**
 	 * taken from stack overflow
@@ -70,9 +45,9 @@ public class RefacKeyboardModule extends InputDevice{
 		    }
 		}
 	
-	private void initialize() {
+	private void initialize(JComponent component) {
 		
-		myComponent.addKeyListener(new KeyListener() {
+		component.addKeyListener(new KeyListener() {
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -104,5 +79,26 @@ public class RefacKeyboardModule extends InputDevice{
 			public void keyTyped(KeyEvent e) {
 			}
 		});
+	}
+	
+	private class KeyState{
+		public final String myName;
+		public final long myTime;
+		
+		public KeyState(String name, long time)  {
+			myName = name;
+			myTime = time;
+		}
+		
+		public String toString(){
+			return myName;
+		}
+	
+		public boolean equals(Object in){
+			if(in instanceof KeyState){
+				return ( myName.equals(((KeyState) in).myName)  );
+			}
+			return false;
+		}
 	}
 }
