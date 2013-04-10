@@ -25,8 +25,8 @@ public class Input {
 	private List<WeakReference> myWeakReferences = new ArrayList<WeakReference>();
 	private Map<String, Method> keyToMethod = new HashMap<String, Method>();
 	private Map<String, Object> keyToInstance = new HashMap<String, Object>();
-	private ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); //still not sure if needed 
-	private Map<String, String> dynamicMapping = new HashMap<String, String>();
+	private ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); /** still not sure if needed. abk **/
+	private Map<String, String> dynamicMapping = new HashMap<String, String>(); /** not the biggest fan. abk **/
 	
 	private final ResourceBundle RESOURCES;
 	private static ResourceBundle SETTINGS;
@@ -34,13 +34,17 @@ public class Input {
 	
 	public Input(String resourcePath, JComponent component) {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
+		DEFAULT_SETTINGS = ResourceBundle.getBundle("input/DefaultSettings");
+		
 		inputDevices.add(new KeyboardInput(component, this));
 		inputDevices.add(new MouseInput(component, this));
-		DEFAULT_SETTINGS = ResourceBundle.getBundle("input/DefaultSettings");
 	}
 	
 	/**
 	 * put new key/values in our dynaicMapping object
+	 * TODO: not a fan of two objects. Lets try to put it into RESOURCES or get new path. 
+	 * 			also, don't know if this solves the root problem. abk
+	 * TODO: need to be able to remove mappings. abk
 	 * @param inputBehavior
 	 * @param gameBehavior
 	 */
@@ -96,7 +100,7 @@ public class Input {
 	
 	/**
 	 * Get a setting from our SETTINGS resource file object
-	 * 
+	 * TODO: Possibly move into InputDevice class. SETTINGS handling feels a bit awkward in Input
 	 * @param String key in
 	 * @return String value out
 	 */
@@ -114,6 +118,7 @@ public class Input {
 
 	/**
 	 * Notification receiver from input devices
+	 * TODO not a fan of two maps. abk
 	 * TODO better exception handling
 	 * @param String action (key for dynamicMapping)
 	 * @param AlertObject object (input state and specifics)
@@ -135,7 +140,8 @@ public class Input {
 	
 	/**
 	 * Executes methods using reflection
-	 * TODO: Only communists catch exceptions 
+	 * TODO: handle exceptions 
+	 * TODO: ?maybe use the annotation to set the method input?
 	 * @param key
 	 * @param in
 	 */
