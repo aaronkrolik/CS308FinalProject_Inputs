@@ -60,7 +60,7 @@ public class KeyboardModule extends InputDevice{
 		myComponent.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				final String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
+				final String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
 
 				boolean alreadyExists = false;
 				for(KeyState key : pressedKeys) {
@@ -83,7 +83,7 @@ public class KeyboardModule extends InputDevice{
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
+				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
 				notifyInputAction("Keyboard_" + keyName + "_KeyUp", new AlertObject(e.getWhen()));
 
 				Set<KeyState> keysToRemove = new HashSet<KeyState>();

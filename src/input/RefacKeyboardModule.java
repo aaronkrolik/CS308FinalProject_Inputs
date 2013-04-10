@@ -86,8 +86,8 @@ public class RefacKeyboardModule extends InputDevice{
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				KeyState downKey = new KeyState( KeyboardHelper.getKeyName(e.getKeyCode()), e.getWhen());
-				String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
+				KeyState downKey = new KeyState( KeyboardMappings.getKeyName(e.getKeyCode()), e.getWhen());
+				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
 				if (!myKeys.contains(downKey)){
 					myKeys.add(downKey);
 				}	
@@ -97,9 +97,9 @@ public class RefacKeyboardModule extends InputDevice{
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				KeyState temp = new KeyState( KeyboardHelper.getKeyName(e.getKeyCode()), e.getWhen());
+				KeyState temp = new KeyState( KeyboardMappings.getKeyName(e.getKeyCode()), e.getWhen());
 				long timeDifference = temp.myTime - myKeys.remove(myKeys.indexOf(temp)).myTime;
-				String keyName = KeyboardHelper.getKeyName(e.getKeyCode());
+				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
 				if (timeDifference < 100) {
 					notifyInputAction("Keyboard_" + keyName + "_ShortClick",
 							new AlertObject(e.getWhen()));
