@@ -25,7 +25,7 @@ public class RefacKeyboardModule extends InputDevice{
 	public static final String myDevice = "KEYBOARD";
 	List<KeyState> myKeys;
 	
-	private class KeyState implements Comparable{
+	private class KeyState{
 		public final String myName;
 		public final long myTime;
 		
@@ -37,24 +37,14 @@ public class RefacKeyboardModule extends InputDevice{
 		public String toString(){
 			return myName;
 		}
-		
+	
 		public boolean equals(Object in){
 			if(in instanceof KeyState){
 				return ( myName.equals(((KeyState) in).myName)  );
 			}
 			return false;
 		}
-		
-		public int hashCode(){
-			return myName.hashCode();
-		}
-		
-		public int compareTo(Object in) {
-			if (!equals(in)){
-				return (int) (((KeyState) in).myTime - myTime);
-			}
-			return 0;
-		}	
+	
 	}
 	
 	
