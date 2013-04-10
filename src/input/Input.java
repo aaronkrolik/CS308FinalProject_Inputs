@@ -22,22 +22,37 @@ import javax.swing.JComponent;
 @SuppressWarnings("rawtypes")
 public class Input {
 
-
 	private final ResourceBundle RESOURCES;
 
-	List<WeakReference> myWeakReferences = new ArrayList<WeakReference>();
-	Map<String, Method> keyToMethod = new HashMap<String, Method>();
-	Map<String, Object> keyToInstance = new HashMap<String, Object>();
-	ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); //still not sure if needed 
+	private List<WeakReference> myWeakReferences = new ArrayList<WeakReference>();
+	private Map<String, Method> keyToMethod = new HashMap<String, Method>();
+	private Map<String, Object> keyToInstance = new HashMap<String, Object>();
+	private ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); //still not sure if needed 
+	private static ResourceBundle SETTINGS;
+	private static ResourceBundle DEFAULT_SETTINGS;
+	private Map<String, String> dynamicMapping = new HashMap<String, String>();
 
 	public Input(String resourcePath, JComponent component) {
 		RESOURCES = ResourceBundle.getBundle(resourcePath);
 		inputDevices.add(new KeyboardInput(component, this));
 		inputDevices.add(new MouseInput(component, this));
+		DEFAULT_SETTINGS = ResourceBundle.getBundle("input/DefaultSettings");
 	}
 	
-	public void SetDefualts(String resourcePath){
-		
+	public void overrideSettings(String resourcePath){
+		SETTINGS = ResourceBundle.getBundle(resourcePath);
+	}
+
+	public String getSetting(String in){
+		try{
+			if(SETTINGS != null) {
+				return SETTINGS.getString(in);
+			} else {
+				return DEFAULT_SETTINGS.getString(in);
+			}
+		} catch (MissingResourceException e) {
+			return DEFAULT_SETTINGS.getString(in);
+		}
 	}
 
 	/**
@@ -87,7 +102,7 @@ public class Input {
 	 * @param key
 	 * @param in
 	 */
-	public void execute(String key, ActionObject in) {
+	public void execute(String key, AlertObject in) {
 		for (WeakReference x : myWeakReferences) {
 			try {
 				Class[] paramClasses = keyToMethod.get(key).getParameterTypes();
@@ -101,18 +116,24 @@ public class Input {
 		}
 	}
 	
+	public void setMapping(String inputBehavior, String gameBehavior) {
+		dynamicMapping.put(inputBehavior, gameBehavior);
+	}
 	
-
 	/**
 	 * Notification receiver from input devices
 	 * 
 	 * @param action
 	 * @param object
 	 */
-	public void actionNotification(String action, ActionObject object) {
+	public void actionNotification(String action, AlertObject object) {
+		System.out.println(action);
 		try {
-			if(RESOURCES.containsKey(action))
+			if(dynamicMapping.containsKey(action)) {
+				execute(dynamicMapping.get(action), object);
+			} else if(RESOURCES.containsKey(action)) {
 				execute(RESOURCES.getString(action), object);
+			}
 		} catch (NullPointerException e) {
 			System.out.println("Null Pointer Exception");
 		} catch (MissingResourceException e){

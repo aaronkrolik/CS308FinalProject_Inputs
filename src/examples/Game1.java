@@ -3,6 +3,7 @@ package examples;
 import input.AlertObject;
 import input.Input;
 import input.InputClassTarget;
+import input.InputDevice;
 import input.InputMethodTarget;
 import input.PositionObject;
 
@@ -12,6 +13,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 @InputClassTarget
 public class Game1 {
@@ -40,7 +42,12 @@ public class Game1 {
 		
 		input1 = new Input("examples/Game1Mapping", myCanvas);
 		input1.addListenerTo(this);
+		
+		//Optional
+		//input1.overrideSettings("examples/Settings");
 
+		input1.setMapping("Mouse_Right_Click", "jump");//"Keyboard_AS_KeyDown"
+		
 		setUpObstacles();
 	}
 	

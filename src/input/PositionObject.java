@@ -2,7 +2,7 @@ package input;
 
 import java.awt.geom.Point2D;
 
-public class PositionObject extends ActionObject {
+public class PositionObject extends AlertObject {
 	private double myX;
 	private double myY;
 	private double myZ;

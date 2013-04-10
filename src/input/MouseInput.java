@@ -29,10 +29,6 @@ public class MouseInput extends InputDevice {
 		return new PositionObject(e.getX() / myComponent.getWidth(), e.getY() / myComponent.getHeight(), e.getWhen());
 	}
 	
-
-		
-	
-
 	/**
 	 * Sets up single mouse listener. implements MouseMotionAdapter with mouseMove and MouseDrag
 	 */
@@ -119,13 +115,13 @@ public class MouseInput extends InputDevice {
 				
 				notifyInputAction("Mouse_" + mouseSide + "_Up", makePositionObject(e));
 				
-				if (e.getWhen() - buttonPressedTime < Integer.parseInt(InputDevice.getSetting("ShortClickTimeThreshold"))) {
+				if (e.getWhen() - buttonPressedTime < Integer.parseInt(myInput.getSetting("ShortClickTimeThreshold"))) {
 					notifyInputAction("Mouse_" + mouseSide + "_ShortClick", makePositionObject(e));
 				}
-				if (e.getWhen() - buttonPressedTime > Integer.parseInt(InputDevice.getSetting("LongClickTimeThreshold"))) {
+				if (e.getWhen() - buttonPressedTime > Integer.parseInt(myInput.getSetting("LongClickTimeThreshold"))) {
 					notifyInputAction("Mouse_" + mouseSide + "_LongClick", makePositionObject(e));
 				}
-				if (lastPosition != null && lastPosition.distance(e.getPoint()) < Integer.parseInt(InputDevice.getSetting("DoubleClickDistanceThreshold")) && e.getWhen() - lastClickTime < Integer.parseInt(InputDevice.getSetting("DoubleClickDistanceThreshold")))  {
+				if (lastPosition != null && lastPosition.distance(e.getPoint()) < Integer.parseInt(myInput.getSetting("DoubleClickDistanceThreshold")) && e.getWhen() - lastClickTime < Integer.parseInt(myInput.getSetting("DoubleClickTimeThreshold")))  {
 					notifyInputAction("Mouse_" + mouseSide + "_DoubleClick", makePositionObject(e));
 				}
 				lastPosition = e.getPoint();
