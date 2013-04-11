@@ -1,8 +1,5 @@
 package input;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 /**
  * The inputDevice performs as the super class for different device modules
  * 
