@@ -66,6 +66,12 @@ public class KeyboardInput extends InputDevice{
 					}
 					myKeys.add(downKey);
 				}
+<<<<<<< HEAD
+=======
+				else
+					notifyInputAction("Keyboard_"+keyName+"_LongPressed",new AlertObject(e.getWhen()));
+				
+>>>>>>> Merge and Refactor
 				ArrayList<KeyState> buttonArray = (ArrayList<KeyState>) myKeys.clone();
 				if(buttonArray.size() > 1)
 					notifyInputAction("Keyboard_" + keyName + "_KeyDown", new AlertObject(e.getWhen()));
