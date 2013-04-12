@@ -130,7 +130,7 @@ public class Input {
 	 * @param AlertObject object (input state and specifics)
 	 */
 	void actionNotification(String action, AlertObject object) {
-		System.out.println(action);
+		//System.out.println(action);
 		try {
 			if(dynamicMapping.containsKey(action)) {
 				execute(dynamicMapping.get(action), object);

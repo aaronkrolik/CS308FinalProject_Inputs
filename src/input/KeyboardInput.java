@@ -69,7 +69,7 @@ public class KeyboardInput extends InputDevice{
 					myDownKeys.add(downKey);
 				}
 				else
-					notifyInputAction(downKey.getFullName() + "_LongPressed",new AlertObject(e.getWhen()));
+					notifyInputAction(downKey.getFullName() + "_LongPress",new AlertObject(e.getWhen()));
 				
 				ArrayList<ButtonState> buttonArray = (ArrayList<ButtonState>) myDownKeys.clone();
 				if(buttonArray.size() > 1)
