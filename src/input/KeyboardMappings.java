@@ -9,7 +9,7 @@ public class KeyboardMappings {
 	
 	public static void initialize(){
 		keyMap = new HashMap<Integer,String>();
-		keyMap.put(KeyEvent.VK_0, "0");
+		keyMap.put(KeyEvent.VK_0, "T0");
 		keyMap.put(KeyEvent.VK_1, "1");
 		keyMap.put(KeyEvent.VK_2, "2");
 		keyMap.put(KeyEvent.VK_3, "3");

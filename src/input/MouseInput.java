@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,12 +17,14 @@ public class MouseInput extends InputDevice {
 	public static final String myDevice = "Mouse";
 
 	private Point lastPosition;
+	private Point lastClickPosition;
 	private long lastClickTime = 0;
 	private String lastClickButton = "";
 	private Input myInput;
 	private InputDevice inDev = this;
 	private Map<Integer, String> mouseNameMap;
 	private List<ButtonState> downButtons = new ArrayList<ButtonState>();
+	private boolean gestureAlreadyNotified = false;
 
 	public MouseInput(JComponent component, Input input) {
 		super(myDevice, input);
@@ -40,6 +43,32 @@ public class MouseInput extends InputDevice {
 				                  e.getWhen());
 	}
 
+	private String getClosestWall() {
+		int[] wallDistances = new int[5];
+		String[] walls = {"Left", "Right", "Top", "Bottom"};
+		wallDistances[0] = lastPosition.x;
+		wallDistances[1] = myComponent.getWidth() - lastPosition.x;
+		wallDistances[2] = lastPosition.y;
+		wallDistances[3] = myComponent.getHeight() - lastPosition.y;
+		int min = 9999;
+		int minIndex = 0;
+		for(int i = 0; i < 4; i++) {
+			int newMin = Math.min(wallDistances[i], min);
+			if(newMin != min) {
+				minIndex = i;
+			}
+			min = newMin;
+		}
+		
+		return walls[minIndex];
+	}
+	
+	private String getDirection(Point pt) {
+		String[] walls = {"Right", "Left", "Down", "Up"};
+		int index = (Math.abs(pt.x)-Math.abs(pt.y) > 0)?((int)Math.signum(pt.x) + 1)/2:((int)Math.signum(pt.y) + 1)/2 + 2;
+		return walls[index];
+	}
+	
 	/**
 	 * Sets up single mouse listener. implements MouseMotionAdapter with
 	 * mouseMove and MouseDrag
@@ -47,11 +76,22 @@ public class MouseInput extends InputDevice {
 	private void initialize() {
 		myComponent.addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseMoved(MouseEvent e) {
+				lastPosition = e.getPoint();
 				notifyInputAction("Mouse_Move", makePositionObject(e));
 			}
 
 			public void mouseDragged(MouseEvent e) {
+				lastPosition = e.getPoint();
 				notifyInputAction("Mouse_Drag", makePositionObject(e));
+				for(ButtonState downButton : downButtons) {
+					if(!gestureAlreadyNotified && downButton.getPosition() != null && 
+						lastPosition.distance(downButton.getPosition()) > 
+					   	Integer.parseInt(myInput.getSetting("DoubleClickDistanceThreshold"))) {
+						notifyInputAction(downButton.getFullName() + "_Drag" + getDirection(new Point(downButton.getPosition().x - lastPosition.x, 
+								 downButton.getPosition().y - lastPosition.y)), makePositionObject(e));
+						gestureAlreadyNotified = true;
+					}
+				}
 			}
 		});
 
@@ -60,15 +100,27 @@ public class MouseInput extends InputDevice {
 			public void mouseClicked(MouseEvent e) {}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+				notifyInputAction("Mouse_MoveIn", makePositionObject(e));
+			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+				if(lastPosition != null) {
+					notifyInputAction("Mouse_MoveOut", makePositionObject(e));
+					notifyInputAction("Mouse_MoveOut" + getClosestWall(), makePositionObject(e));
+					for(ButtonState downButton : downButtons) {
+						notifyInputAction(downButton.getFullName() + "_DragOut" + getClosestWall(), makePositionObject(e));
+					}
+					if(!downButtons.isEmpty())
+						notifyInputAction("Mouse_DragOut", makePositionObject(e));
+				}
+			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
 				String buttonName = mouseNameMap.get(e.getButton());
-				ButtonState downButton = new ButtonState(myDevice, buttonName, e.getWhen(), inDev);
+				ButtonState downButton = new ButtonState(myDevice, buttonName, e.getWhen(), inDev, e.getPoint());
 				downButtons.add(downButton);
 				notifyInputAction("Mouse_" + buttonName + "_Down", new AlertObject(e.getWhen()));
 			}
@@ -92,17 +144,18 @@ public class MouseInput extends InputDevice {
 					notifyInputAction(temp.getFullName() + "_LongClick",
 					makePositionObject(e));
 				}
-				if (lastPosition != null && lastClickButton.equals(buttonName)
-						&& lastPosition.distance(e.getPoint()) < Integer.parseInt(myInput
+				if (lastClickPosition != null && lastClickButton.equals(buttonName)
+						&& lastClickPosition.distance(e.getPoint()) < Integer.parseInt(myInput
 								.getSetting("DoubleClickDistanceThreshold"))
 						&& e.getWhen() - lastClickTime < Integer.parseInt(myInput
 								.getSetting("DoubleClickTimeThreshold"))) {
 					notifyInputAction(temp.getFullName() + "_DoubleClick",
 					makePositionObject(e));
 				}
-				lastPosition = e.getPoint();
+				lastClickPosition = e.getPoint();
 				lastClickTime = e.getWhen();
 				lastClickButton = buttonName;
+				gestureAlreadyNotified = false;
 			}
 		});
 	}

@@ -107,7 +107,6 @@ public class Input {
 	
 	/**
 	 * Get a setting from our SETTINGS resource file object
-	 * TODO: Possibly move into InputDevice class. SETTINGS handling feels a bit awkward in Input
 	 * @param String key in
 	 * @return String value out
 	 */
@@ -148,7 +147,6 @@ public class Input {
 	/**
 	 * Executes methods using reflection
 	 * TODO: handle exceptions 
-	 * TODO: ?maybe use the annotation to set the method input?
 	 * @param key
 	 * @param in
 	 */
