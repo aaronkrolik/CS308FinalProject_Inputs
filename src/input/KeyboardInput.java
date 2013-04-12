@@ -9,42 +9,43 @@ import javax.swing.JComponent;
 /**
  * KeyboardModule gets input info from keyboard and send appropriate input info to the Input object
  * @author Ying Chen, Gavin Ovsak, aaronkrolik
- *
  */
 @SuppressWarnings("unchecked")
 public class KeyboardInput extends InputDevice{
 
-	public static final String myDevice = "KEYBOARD";
-	ArrayList<KeyState> myKeys;
-	Input myInput;
-	long lastClickTime = 0;
+	public static final String myDevice = "Keyboard";
+	private ArrayList<ButtonState> myDownKeys;
+	private Input myInput;
+	private long lastClickTime = 0;
+	private InputDevice inDev = this;
+	private String lastClickKey = "";
 	
 	public KeyboardInput(JComponent component, Input input) {
 		super(myDevice,input);
-		myKeys = new ArrayList<KeyState>();
+		myDownKeys = new ArrayList<ButtonState>();
 		initialize(component);
 		myInput = input;
 	}
 
-	private void recursivePermutation(String accumulatedKeys, ArrayList<KeyState> keyArray, int maxSize, long time) {
+	private void recursivePermutation(String accumulatedKeys, ArrayList<ButtonState> keyArray, int maxSize, long time) {
 		if(maxSize == 0) {
-			notifyInputAction("Keyboard_" + accumulatedKeys + "_KeyDown", new AlertObject(time));
+			notifyInputAction(myDevice + "_" + accumulatedKeys + "_Down", new AlertObject(time));
 		} else {
-			for(KeyState key : keyArray) {
-				ArrayList<KeyState> modArray = (ArrayList<KeyState>) keyArray.clone();
+			for(ButtonState key : keyArray) {
+				ArrayList<ButtonState> modArray = (ArrayList<ButtonState>) keyArray.clone();
 				modArray.remove(key);
 				recursivePermutation(key.toString() + accumulatedKeys, modArray, maxSize - 1, time);
 			}
 		}
 	}
 	
-	private void recursiveCombination(ArrayList<KeyState> keyArray, long time, KeyState commonKey) {
+	private void recursiveCombination(ArrayList<ButtonState> keyArray, long time, ButtonState commonKey) {
 		//for each thing, take it out and add keyName and permute it
 		//for each of those things, take each one out and permute it
 		//smaller sized permuations that all include the latest button
 		if(keyArray.size() > 1) {
 			for(int i = 0; i < keyArray.size(); i++) {
-				ArrayList<KeyState> modArray = (ArrayList<KeyState>) keyArray.clone();
+				ArrayList<ButtonState> modArray = (ArrayList<ButtonState>) keyArray.clone();
 				modArray.remove(i);
 				recursiveCombination(modArray, time, commonKey);
 				modArray.add(commonKey);
@@ -59,72 +60,47 @@ public class KeyboardInput extends InputDevice{
 			@Override
 			public void keyPressed(KeyEvent e) {
 				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
-				KeyState downKey = new KeyState( keyName, e.getWhen());
-				if (!myKeys.contains(downKey)){
-					if(myKeys.size() > 1) {
-						recursiveCombination(myKeys, e.getWhen(), downKey);
+				ButtonState downKey = new ButtonState(myDevice, keyName, e.getWhen(), inDev);
+				notifyInputAction(downKey.getFullName() + "_KeyDown", new AlertObject(e.getWhen())); //Legacy Support
+				if (!myDownKeys.contains(downKey)){
+					if(myDownKeys.size() > 1) {
+						recursiveCombination(myDownKeys, e.getWhen(), downKey);
 					}
-					myKeys.add(downKey);
+					myDownKeys.add(downKey);
 				}
 				else
-					notifyInputAction("Keyboard_"+keyName+"_LongPressed",new AlertObject(e.getWhen()));
+					notifyInputAction(downKey.getFullName() + "_LongPressed",new AlertObject(e.getWhen()));
 				
-				ArrayList<KeyState> buttonArray = (ArrayList<KeyState>) myKeys.clone();
+				ArrayList<ButtonState> buttonArray = (ArrayList<ButtonState>) myDownKeys.clone();
 				if(buttonArray.size() > 1)
-					notifyInputAction("Keyboard_" + keyName + "_KeyDown", new AlertObject(e.getWhen()));
-				recursivePermutation("", buttonArray, buttonArray.size(), e.getWhen());
+					recursivePermutation("", buttonArray, buttonArray.size(), e.getWhen());
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
 				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
-				KeyState temp = new KeyState(keyName, e.getWhen());
-				long timeDifference = temp.getTime() - myKeys.remove(myKeys.indexOf(temp)).getTime();
-				notifyInputAction("Keyboard_" + keyName + "_KeyUp",
-							new AlertObject(e.getWhen()));
+				ButtonState temp = new ButtonState(myDevice, keyName, e.getWhen(), inDev);
+				long timeDifference = temp.getTime() - myDownKeys.remove(myDownKeys.indexOf(temp)).getTime();
+				notifyInputAction(temp.getFullName() + "_Up", new AlertObject(e.getWhen()));
+				notifyInputAction(temp.getFullName() + "_KeyUp", new AlertObject(e.getWhen())); //Legacy Support
 				if (timeDifference < Integer.parseInt(myInput.getSetting("ShortClickTimeThreshold")) ) {
-					notifyInputAction("Keyboard_" + keyName + "_ShortClick",
+					notifyInputAction(temp.getFullName() + "_ShortClick",
 							new AlertObject(e.getWhen()));
 				}
 				if (timeDifference >= Integer.parseInt(myInput.getSetting("LongClickTimeThreshold"))) {
-					notifyInputAction("Keyboard_" + keyName + "_LongClick",
+					notifyInputAction(temp.getFullName() + "_LongClick",
 							new AlertObject(e.getWhen()));
 				}
-				if (e.getWhen() - lastClickTime < Integer.parseInt(myInput.getSetting("DoubleClickTimeThreshold"))) {
-					notifyInputAction("Keyboard_" + keyName + "_DoubleClick", new AlertObject(e.getWhen()));
+				if (lastClickKey.equals(keyName) && e.getWhen() - lastClickTime < Integer.parseInt(myInput.getSetting("DoubleClickTimeThreshold"))) {
+					notifyInputAction(temp.getFullName() + "_DoubleClick", new AlertObject(e.getWhen()));
 				}
 				lastClickTime = e.getWhen();
+				lastClickKey = keyName;
 			}
 
 			@Override
 			public void keyTyped(KeyEvent e) {
 			}
 		});
-	}
-	
-	private class KeyState{
-		private final String myName;
-		private final long myTime;
-		
-		public KeyState(String name, long time)  {
-			myName = name;
-			myTime = time;
-		}
-		
-		public String toString(){
-			return myName;
-		}
-		
-		public long getTime() {
-			return myTime;
-		}
-	
-		public boolean equals(Object in){
-			if(in instanceof KeyState){
-				return ( myName.equals(((KeyState) in).myName)  );
-			}
-			return false;
-		}
-	
 	}
 }

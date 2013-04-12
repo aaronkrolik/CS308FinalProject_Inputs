@@ -46,7 +46,7 @@ public class Game1 {
 		//Optional
 		//input1.overrideSettings("examples/Settings");
 
-		input1.setMapping("Mouse_Right_Click", "jump");//"Keyboard_AS_KeyDown"
+		//input1.setMapping("Mouse_Right_Click", "jump");//"Keyboard_AS_KeyDown"
 		
 		setUpObstacles();
 	}
@@ -86,7 +86,7 @@ public class Game1 {
 	}
 	
 	@InputMethodTarget(name="continue")
-	public void goPastPopup(PositionObject posObj) {
+	public void goPastPopup(AlertObject posObj) {
 		popup = false;
 	}
 	

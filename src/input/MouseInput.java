@@ -5,34 +5,39 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComponent;
 
 public class MouseInput extends InputDevice {
 	JComponent myComponent;
-	public final String myDevice = "MOUSE";
+	public static final String myDevice = "Mouse";
 
-	Point lastPosition;
-	long lastClickTime = 0;
-	Input myInput;
-	long buttonPressedTime = 0;
-	String mouseSide;
-	private List<MouseButton> buttons = new ArrayList<MouseButton>();
+	private Point lastPosition;
+	private long lastClickTime = 0;
+	private String lastClickButton = "";
+	private Input myInput;
+	private InputDevice inDev = this;
+	private Map<Integer, String> mouseNameMap;
+	private List<ButtonState> downButtons = new ArrayList<ButtonState>();
 
 	public MouseInput(JComponent component, Input input) {
-		super("MOUSE", input);
+		super(myDevice, input);
 		myComponent = component;
-		buttons.add(new MouseButton(MouseEvent.BUTTON1,"Left",this));
-		buttons.add(new MouseButton(MouseEvent.BUTTON2,"center",this));
-		buttons.add(new MouseButton(MouseEvent.BUTTON3,"right",this));
+		mouseNameMap = new HashMap<Integer, String>();
+		mouseNameMap.put(MouseEvent.BUTTON1, "Left");
+		mouseNameMap.put(MouseEvent.BUTTON2, "Center");
+		mouseNameMap.put(MouseEvent.BUTTON3, "Right");		
 		initialize();
 		myInput = input;
 	}
 
 	private PositionObject makePositionObject(MouseEvent e) {
-		return new PositionObject(e.getX() / myComponent.getWidth(), e.getY()
-				/ myComponent.getHeight(), e.getWhen());
+		return new PositionObject(e.getX() / myComponent.getWidth(), 
+				                  e.getY() / myComponent.getHeight(), 
+				                  e.getWhen());
 	}
 
 	/**
@@ -52,76 +57,57 @@ public class MouseInput extends InputDevice {
 
 		myComponent.addMouseListener(new MouseListener() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				for(MouseButton b : buttons){
-					if(b.isThisSet(e.getButton())){
-						b.mouseClicked(e);
-						break;
-					}
-				}
-			}
+			public void mouseClicked(MouseEvent e) {}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
+			public void mouseEntered(MouseEvent e) {}
 
 			@Override
-			public void mouseExited(MouseEvent e) {
-			}
+			public void mouseExited(MouseEvent e) {}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				for(MouseButton b: buttons){
-					if(b.isThisSet(e.getButton())){
-						b.mousePressed(e);
-						break;
-					}
-				}
+				String buttonName = mouseNameMap.get(e.getButton());
+				ButtonState downButton = new ButtonState(myDevice, buttonName, e.getWhen(), inDev);
+				downButtons.add(downButton);
+				notifyInputAction("Mouse_" + buttonName + "_Down", new AlertObject(e.getWhen()));
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				buttonPressedTime = 0;
-				for(MouseButton b: buttons){
-					if(b.isThisSet(e.getButton())){
-						b.mouseReleased(e);
-						break;
-					}
-				}
+				String buttonName = mouseNameMap.get(e.getButton());
+				ButtonState temp = new ButtonState(myDevice, buttonName, e.getWhen(), inDev);
+				notifyInputAction(temp.getFullName() + "_Up", new AlertObject(e.getWhen()));
+				notifyInputAction(temp.getFullName() + "_KeyUp", new AlertObject(e.getWhen())); //Legacy Support
+				notifyInputAction(temp.getFullName() + "_Click", new AlertObject(e.getWhen())); //Legacy Support
+				long timeDifference = temp.getTime() - downButtons.remove(downButtons.indexOf(temp)).getTime();
 				
-				if (e.getWhen() - buttonPressedTime < Integer.parseInt(myInput
+				if (timeDifference < Integer.parseInt(myInput
 						.getSetting("ShortClickTimeThreshold"))) {
-					notifyInputAction("Mouse_" + mouseSide + "_ShortClick",
-							makePositionObject(e));
+					notifyInputAction(temp.getFullName() + "_ShortClick",
+					makePositionObject(e));
 				}
-				if (e.getWhen() - buttonPressedTime > Integer.parseInt(myInput
+				if (timeDifference > Integer.parseInt(myInput
 						.getSetting("LongClickTimeThreshold"))) {
-					notifyInputAction("Mouse_" + mouseSide + "_LongClick",
-							makePositionObject(e));
+					notifyInputAction(temp.getFullName() + "_LongClick",
+					makePositionObject(e));
 				}
-				if (lastPosition != null
+				if (lastPosition != null && lastClickButton.equals(buttonName)
 						&& lastPosition.distance(e.getPoint()) < Integer.parseInt(myInput
 								.getSetting("DoubleClickDistanceThreshold"))
 						&& e.getWhen() - lastClickTime < Integer.parseInt(myInput
 								.getSetting("DoubleClickTimeThreshold"))) {
-					notifyInputAction("Mouse_" + mouseSide + "_DoubleClick",
-							makePositionObject(e));
+					notifyInputAction(temp.getFullName() + "_DoubleClick",
+					makePositionObject(e));
 				}
 				lastPosition = e.getPoint();
 				lastClickTime = e.getWhen();
+				lastClickButton = buttonName;
 			}
 		});
 	}
 	
 	public void notifyInput(String keyInfo,MouseEvent e){
 		notifyInputAction(keyInfo,makePositionObject(e));
-	}
-	
-	public void setMousePressedTime(long time){
-		buttonPressedTime = time;
-	}
-	
-	public void setMouseSide(String s){
-		mouseSide = s;
 	}
 }
