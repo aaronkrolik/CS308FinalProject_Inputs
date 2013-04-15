@@ -21,6 +21,4 @@ public class PlayerSuperHero extends Player{
 	public void slowDown() {
 		changeMinigameSpeed(-5);
 	}
-	
-
 }
