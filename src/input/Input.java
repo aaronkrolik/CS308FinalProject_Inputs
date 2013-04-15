@@ -123,7 +123,7 @@ public class Input {
 	 * @param AlertObject object (input state and specifics)
 	 */
 	void actionNotification(String inputBehavior, AlertObject object) {
-		//System.out.println(inputBehavior);
+		System.out.println(inputBehavior);
 		try {
 			if (myInputMap.containsInputBehavior(inputBehavior)) {
 				execute(myInputMap.getGameBehavior(inputBehavior), object);
