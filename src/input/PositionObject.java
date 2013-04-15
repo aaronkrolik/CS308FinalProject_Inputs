@@ -11,28 +11,46 @@ public class PositionObject extends AlertObject {
 	private double myX;
 	private double myY;
 	private double myZ;
+	private double myXMax;
+	private double myYMax;
+	private double myZMax;
 	
-	public PositionObject(double x, double y, long time) {
-		this(x,y,0,time);
+	public PositionObject(double x, double xMax, double y, double yMax, long time) {
+		this(x,xMax,y,yMax,0,1,time);
 	}
 	
-	public PositionObject(double x, double y, double z, long time) {
+	public PositionObject(double x, double xMax, double y, double yMax, double z, double zMax, long time) {
 		super(time);
 		myX = x;
 		myY = y;
 		myZ = z;
+		myXMax = xMax;
+		myYMax = yMax;
+		myZMax = zMax;
 	}
 	
 	public double getX() {
 		return myX;
+	}
+	
+	public double getRelativeX() {
+		return myX/myXMax;
 	}
 
 	public double getY() {
 		return myY;
 	}
 
+	public double getRelativeY() {
+		return myY/myYMax;
+	}
+	
 	public double getZ() {
 		return myZ;
+	}
+
+	public double getRelativeZ() {
+		return myZ/myZMax;
 	}
 
 	public Point2D getPoint2D() {

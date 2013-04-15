@@ -44,13 +44,11 @@ public class MouseInput extends InputDevice {
 	}
 
 	private PositionObject makePositionObject(MouseEvent e) {
-		return new PositionObject(e.getX() / myComponent.getWidth(), e.getY()
-				/ myComponent.getHeight(), e.getWhen());
+		return new PositionObject(e.getX(), myComponent.getWidth(), e.getY(), myComponent.getHeight(), e.getWhen());
 	}
 
 	private RollObject makeWheelObject(MouseWheelEvent e) {
-		return new RollObject(e.getWhen(), e.getWheelRotation(),
-				e.getUnitsToScroll());
+		return new RollObject(e.getWhen(), e.getWheelRotation());
 	}
 
 	private String getClosestWall() {

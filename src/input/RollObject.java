@@ -6,17 +6,11 @@ package input;
  * @author Ying Chen 
  */
 public class RollObject extends AlertObject {
-	private int roundsRotated;
 	private int unitsRotated;
 
-	public RollObject(long time, int rounds, int units) {
+	public RollObject(long time, int units) {
 		super(time);
-		roundsRotated = rounds;
 		unitsRotated = units;
-	}
-
-	public int getRoundsRotated() {
-		return roundsRotated;
 	}
 
 	public int getUnitsRotated() {

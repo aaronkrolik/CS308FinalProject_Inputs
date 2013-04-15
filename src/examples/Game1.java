@@ -7,6 +7,7 @@ import input.InputDevice;
 import input.InputMethodTarget;
 import input.PositionObject;
 import input.ResourceMappingObject;
+import input.RollObject;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -69,13 +70,18 @@ public class Game1 {
 	}
 
 	@InputMethodTarget(name="continue")
-	public void goPastPopup(AlertObject posObj) {
+	public void goPastPopup() {
 		popup = false;
 	}
 	
-	@InputMethodTarget(name="test")
+	@InputMethodTarget(name="movetest")
 	public void movementCoordTest(PositionObject posObj) {
 		//System.out.println(posObj.getX() + ", " + posObj.getY());
+	}
+	
+	@InputMethodTarget(name="scrolltest")
+	public void scrollTest(RollObject rollObj) {
+		System.out.println("" + rollObj.getUnitsRotated());
 	}
 	
 	@InputMethodTarget(name = "setMode1")

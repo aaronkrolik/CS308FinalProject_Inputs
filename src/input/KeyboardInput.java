@@ -59,6 +59,7 @@ public class KeyboardInput extends InputDevice{
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
+				notifyInputAction("Keyboard_Any_Down", new AlertObject(e.getWhen()));
 				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
 				ButtonState downKey = new ButtonState(myDevice, keyName, e.getWhen(), inDev);
 				notifyInputAction(downKey.getFullName() + "_KeyDown", new AlertObject(e.getWhen())); //Legacy Support
@@ -78,6 +79,7 @@ public class KeyboardInput extends InputDevice{
 
 			@Override
 			public void keyReleased(KeyEvent e) {
+				notifyInputAction("Keyboard_Any_Up", new AlertObject(e.getWhen()));
 				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
 				ButtonState temp = new ButtonState(myDevice, keyName, e.getWhen(), inDev);
 				long timeDifference = temp.getTime() - myDownKeys.remove(myDownKeys.indexOf(temp)).getTime();
