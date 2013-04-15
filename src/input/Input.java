@@ -75,7 +75,7 @@ public class Input {
 	 */
 	@SuppressWarnings("unchecked")
 	public void addListenerTo(Object in) {
-		
+
 		myWeakReferences.add(new WeakReference(in));
 		Class inputClass = in.getClass();
 		
