@@ -64,6 +64,7 @@ public class ResourceContainer {
 	 * Sets mappings to those found in the current resource file.
 	 */
 	public void restoreDefualt(){
+		resourceMapping.clear();
 		resourceMapping = convertResourceBundleToMap(myPersistentResources);
 	}
 	

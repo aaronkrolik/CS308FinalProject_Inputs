@@ -114,6 +114,12 @@ public class Game1 {
 		input1.overrideMapping("Keyboard_M_KeyDown", "jump");
 	}
 	
+	@InputMethodTarget(name = "restore")
+	public void restore(AlertObject x){
+		input1.restoreMappingDefualts();
+	}
+	
+	
 	/**
 	 * Keeps the local time counter updated
 	 * 

@@ -60,6 +60,10 @@ public class Input {
 	public void setMappingResource(String path){
 		MAPPINGRESOURCE = new ResourceContainer("mappings", path);
 	}
+	
+	public void restoreMappingDefualts(){
+		MAPPINGRESOURCE.restoreDefualt();
+	}
 
 	/**
 	 * Override our default input settings
