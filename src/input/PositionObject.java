@@ -1,7 +1,12 @@
 package input;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
 
+/**
+ * Position Object holds 
+ * @author Gavin Ovsak
+ */
 public class PositionObject extends AlertObject {
 	private double myX;
 	private double myY;

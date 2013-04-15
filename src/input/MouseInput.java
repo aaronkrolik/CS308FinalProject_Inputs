@@ -14,6 +14,10 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
+/**
+ * MouseInput catches events from the Mouse Input Device and passes them to Input.
+ * @author Gavin Ovsak, Ying Chen
+ */
 public class MouseInput extends InputDevice {
 	JComponent myComponent;
 	public static final String myDevice = "Mouse";
@@ -194,14 +198,14 @@ public class MouseInput extends InputDevice {
 			 * the wheel away from him.
 			 */
 			@Override
-			public void mouseWheelMoved(MouseWheelEvent arg0) {
-				if (arg0.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-					if (arg0.getWheelRotation() > 0)
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+					if (e.getWheelRotation() > 0)
 						notifyInputAction(myDevice + "_Wheel" + "_Down",
-								makeWheelObject(arg0));
+								makeWheelObject(e));
 					else
 						notifyInputAction(myDevice + "_Wheel" + "_Up",
-								makeWheelObject(arg0));
+								makeWheelObject(e));
 				}
 			}
 		});

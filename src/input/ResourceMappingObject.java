@@ -15,19 +15,18 @@ import java.util.ResourceBundle;
  * @author aaronkrolik
  *
  */
-public class ResourceContainer {
+public class ResourceMappingObject {
 	
 	private final String myName;
 	private String myPath;
 	private ResourceBundle myPersistentResources;
 	private Map<String, String> resourceMapping;
 	
-	
-	public ResourceContainer(String name){
+	public ResourceMappingObject(String name){
 		myName = name;
 	}
 	
-	public ResourceContainer(String name, String path){
+	public ResourceMappingObject(String name, String path){
 		this(name);
 		setResourcePath(path);	
 	}
@@ -35,7 +34,7 @@ public class ResourceContainer {
 	public void setResourcePath(String path){
 		myPath = path;
 		resourceMapping = convertResourceBundleToMap( (myPersistentResources = ResourceBundle.getBundle(path)) );
-		DEBUGprintMap(resourceMapping);
+		//DEBUGprintMap(resourceMapping);
 	}
 
 	public String getName(){
@@ -45,6 +44,7 @@ public class ResourceContainer {
 	public String getCurrentPath(){
 		return myPath;
 	}
+	
 	/**
 	 * get corresponding value from our resource map given a key
 	 * @param key
@@ -52,19 +52,18 @@ public class ResourceContainer {
 	 * 
 	 * TODO handle invalid keys. maybe throw exception 
 	 */
-	public String getValue(String key) {
-		return resourceMapping.get(key);
+	public String getGameBehavior(String inputBehavior) {
+		return resourceMapping.get(inputBehavior);
 	}
 	
-	public boolean containsKey(String key){
-		return resourceMapping.containsKey(key);
+	public boolean containsInputBehavior(String inputBehavior){
+		return resourceMapping.containsKey(inputBehavior);
 	}
-	
 	
 	/**
 	 * Sets mappings to those found in the current resource file.
 	 */
-	public void restoreDefualt(){
+	public void restoreDefault(){
 		resourceMapping.clear();
 		resourceMapping = convertResourceBundleToMap(myPersistentResources);
 	}
@@ -108,8 +107,6 @@ public class ResourceContainer {
 			}
 		}
 		
-		
-		
 		try {
 			PrintWriter out = new PrintWriter(new File(path));
 			for (Map.Entry<String,String> ent : temp.entrySet()) {
@@ -118,14 +115,11 @@ public class ResourceContainer {
 
 	        out.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		
 	}
 	
 	/**
-	 * Full disclosure: got this method from stackoverflow
+	 * Parse string as coming in, change k/v order
 	 * @param resource
 	 * @return
 	 */
@@ -133,15 +127,19 @@ public class ResourceContainer {
 	        Map<String, String> map = new HashMap<String, String>();
 	        Enumeration<String> keys = resource.getKeys();
 	        while (keys.hasMoreElements()) {
-	            String key = keys.nextElement();
-	            map.put(key, resource.getString(key));
+	            String gameBehavior = keys.nextElement();
+	            for(String inputBehavior : parseStr(resource.getString(gameBehavior))) {
+	 	            map.put(inputBehavior, gameBehavior);
+	            }
+	            String oldInputBehavior = gameBehavior;
+	            String oldGameBehavior = resource.getString(oldInputBehavior);
+ 	            map.put(oldInputBehavior, oldGameBehavior);//Legacy support for flipped resource files
 	        }   
 	        return map;
 	 }
 	 
 	 /**
-	  * dont mind me... i'm not hard coded at all
-	  * TODO make abstract and all that shit
+	  * Breaks up a list of inputBehaviors separated by "or" pipes
 	  * @param in
 	  * @return parsed string
 	  */
@@ -149,14 +147,13 @@ public class ResourceContainer {
 		 return in.split("\\|");
 	 }
 
-	 private void DEBUGprintMap(Map<String, String> foo){
-			Iterator iterator = foo.keySet().iterator();
+	 private void DEBUGprintMap(Map<String, String> map){
+			Iterator iterator = map.keySet().iterator();
 	        while (iterator.hasNext()) {
 	            String key = (String) iterator.next();
-	            String value = foo.get(key);
+	            String value = map.get(key);
 	            System.out.println(key + " = " + value);
 	        }
 	        System.out.println("---");
 	 }
-
 }

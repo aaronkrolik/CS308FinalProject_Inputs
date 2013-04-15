@@ -6,7 +6,7 @@ import input.InputClassTarget;
 import input.InputDevice;
 import input.InputMethodTarget;
 import input.PositionObject;
-import input.ResourceContainer;
+import input.ResourceMappingObject;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -42,11 +42,10 @@ public class Game1 {
 		updateWindowSize();
 		
 		input1 = new Input("examples/Game1MappingsNEW", myCanvas);
-		ResourceContainer test = new ResourceContainer("test", "examples/Game1MappingsNEW");
-		test.overrideMapping("jump", "DOSHITnew|FUCKSHITUP");
-
 		input1.addListenerTo(this);
 		
+		//input1.replaceMappingResourcePath("examples/Game1MappingsNEW");
+
 		//Optional
 		//input1.overrideSettings("examples/Settings");
 
@@ -116,7 +115,7 @@ public class Game1 {
 	
 	@InputMethodTarget(name = "restore")
 	public void restore(AlertObject x){
-		input1.restoreMappingDefualts();
+		input1.restoreMappingDefaults();
 	}
 	
 	

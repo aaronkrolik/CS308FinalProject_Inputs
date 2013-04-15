@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
 
@@ -16,33 +17,31 @@ import javax.swing.JComponent;
  * Input API built to allow games to accept input from an expandable set of input devices.
  * 
  * @author Gavin Ovsak, aaronkrolik
- * 
  */
 @SuppressWarnings("rawtypes")
 public class Input {
 
 	private List<WeakReference> myWeakReferences = new ArrayList<WeakReference>();
-	private Map<String, Method> keyToMethod = new HashMap<String, Method>();
+	private Map<String, Method> gameBehaviors = new HashMap<String, Method>();
 	private ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); 
-	private ResourceContainer myInputMap;
-	private ResourceContainer mySettings;
+	private ResourceMappingObject myInputMap;
+	private ResourceBundle myDefaultSettings;
+	private ResourceBundle myOverrideSettings;
 	
 	public Input(String inputMapResourcePath, JComponent component) {
-		this(inputMapResourcePath, "input/DefaultSettings", component);
-	}
-	
-	public Input(String inputMapResourcePath, String settingsResourcePath, JComponent component) {
-		myInputMap = new ResourceContainerReversed("mapping", inputMapResourcePath);
-		mySettings = new ResourceContainer("settings", settingsResourcePath);
+		myInputMap = new ResourceMappingObject("mapping", inputMapResourcePath);
+		myDefaultSettings = ResourceBundle.getBundle("input/DefaultSettings");
 		inputDevices.add(new KeyboardInput(component, this));
 		inputDevices.add(new MouseInput(component, this));
 	}
 	
+	public Input(String inputMapResourcePath, String overrideSettingsResourcePath, JComponent component) {
+		this(inputMapResourcePath, component);
+		myOverrideSettings = ResourceBundle.getBundle(overrideSettingsResourcePath);
+	}
+	
 	/**
-	 * put new key/values in our dynaicMapping object
-	 * TODO: not a fan of two objects. Lets try to put it into RESOURCES or get new path. 
-	 * 			also, don't know if this solves the root problem. abk
-	 * TODO: need to be able to remove mappings. abk
+	 * put new key/values in our input/game behavior mapping object
 	 * @param inputBehavior
 	 * @param gameBehavior
 	 */
@@ -50,8 +49,12 @@ public class Input {
 		myInputMap.overrideMapping(inputBehavior, gameBehavior);
 	}
 	
-	public void restoreMappingDefualts(){
-		myInputMap.restoreDefualt();
+	public void replaceMappingResourcePath(String resourcePath) {
+		myInputMap.setResourcePath(resourcePath);
+	}
+	
+	public void restoreMappingDefaults(){
+		myInputMap.restoreDefault();
 	}
 
 	/**
@@ -59,7 +62,7 @@ public class Input {
 	 * @param String resourcePath is the relative location to the settings resource file
 	 */
 	public void overrideSettings(String resourcePath){
-		mySettings.setResourcePath(resourcePath);
+		myOverrideSettings = ResourceBundle.getBundle(resourcePath);
 	}
 
 	/**
@@ -79,7 +82,7 @@ public class Input {
 				for (Method method : inputClass.getMethods()) {
 					Annotation annotation = method.getAnnotation(InputMethodTarget.class);
 					if (annotation instanceof InputMethodTarget) {
-						keyToMethod.put(((InputMethodTarget) annotation).name(),method);
+						gameBehaviors.put(((InputMethodTarget) annotation).name(),method);
 					}
 				}
 			}
@@ -101,32 +104,35 @@ public class Input {
 	}
 	
 	/**
-	 * Get a setting from our SETTINGS resource file object
+	 * Get a setting from our settings resource file objects
 	 * @param String key in
 	 * @return String value out
 	 */
-	protected String getSetting(String in){
-		return mySettings.getValue(in);
+	protected String getSetting(String settingName){
+		if(myOverrideSettings != null && myOverrideSettings.containsKey(settingName)) {
+			return myOverrideSettings.getString(settingName);
+		} else {
+			return myDefaultSettings.getString(settingName);
+		}
 	}
 
 	/**
 	 * Notification receiver from input devices
-	 * TODO not a fan of two maps. abk
 	 * TODO better exception handling
 	 * @param String action (key for dynamicMapping)
 	 * @param AlertObject object (input state and specifics)
 	 */
-	void actionNotification(String action, AlertObject object) {
+	void actionNotification(String inputBehavior, AlertObject object) {
+		System.out.println(inputBehavior);
 		try {
-			if (myInputMap.containsKey(action)) {
-				execute(myInputMap.getValue(action), object);
+			if (myInputMap.containsInputBehavior(inputBehavior)) {
+				execute(myInputMap.getGameBehavior(inputBehavior), object);
 			}
 		} catch (NullPointerException e) {
 			System.out.println("Null Pointer Exception");
 		} catch (MissingResourceException e) {
-			System.out
-					.println("Missing Resource Exception! Resources did not contain: "
-							+ action);
+			System.out.println("Missing Resource Exception! Resources did not contain: "
+							   + inputBehavior);
 		}
 	}
 	
@@ -136,14 +142,14 @@ public class Input {
 	 * @param key
 	 * @param in
 	 */
-	private void execute(String key, AlertObject in) {
+	private void execute(String gameBehavior, AlertObject in) {
 		for (WeakReference x : myWeakReferences) {
 			try {
-				Class[] paramClasses = keyToMethod.get(key).getParameterTypes();
+				Class[] paramClasses = gameBehaviors.get(gameBehavior).getParameterTypes();
 				if(paramClasses.length == 0) {
- 					keyToMethod.get(key).invoke(x.get());
+ 					gameBehaviors.get(gameBehavior).invoke(x.get()); //An argument is not required for game behvaiors
 				} else if(paramClasses[0].isInstance(in)) {
- 					keyToMethod.get(key).invoke(x.get(), paramClasses[0].cast(in));
+ 					gameBehaviors.get(gameBehavior).invoke(x.get(), paramClasses[0].cast(in));
 				}
 			} catch (IllegalArgumentException e) {
 			} catch (IllegalAccessException e) {

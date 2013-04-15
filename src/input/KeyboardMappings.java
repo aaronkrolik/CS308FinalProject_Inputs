@@ -4,6 +4,11 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Maps KeyEvent numbers to a consistent naming convention
+ * @author Gavin Ovsak, Ying Chen
+ *
+ */
 public class KeyboardMappings {
 	private static Map<Integer,String> keyMap;
 	
