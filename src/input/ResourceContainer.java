@@ -44,6 +44,16 @@ public class ResourceContainer {
 	public String getCurrentPath(){
 		return myPath;
 	}
+	/**
+	 * get corresponding value from our resource map given a key
+	 * @param key
+	 * @return value
+	 * 
+	 * TODO handle invalid keys. maybe throw exception 
+	 */
+	public String getValue(String key) {
+		return resourceMapping.get(key);
+	}
 	
 	
 	/**
