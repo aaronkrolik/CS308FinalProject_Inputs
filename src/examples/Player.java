@@ -70,11 +70,17 @@ public class Player extends Sprite {
 		}
 	}
 	
-	
+	@InputMethodTarget(name="slowdown")
 	public void slowDown() {
 		if (minigameSpeed > 10) {
 			minigameSpeed -= 10;
 		}
+	}
+	
+	
+	
+	protected void changeMinigameSpeed(int in){
+		minigameSpeed += in;
 	}
 
 	public double getPosition() {

@@ -120,6 +120,7 @@ public class ResourceMappingObject {
 	
 	/**
 	 * Parse string as coming in, change k/v order
+	 * code inspiration form StackOverflow :)
 	 * @param resource
 	 * @return
 	 */
