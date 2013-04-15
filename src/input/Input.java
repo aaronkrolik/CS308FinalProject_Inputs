@@ -151,8 +151,11 @@ public class Input {
 		for (WeakReference x : myWeakReferences) {
 			try {
 				Class[] paramClasses = keyToMethod.get(key).getParameterTypes();
-				if(paramClasses[0].isInstance(in))
+				if(paramClasses.length == 0) {
+ 					keyToMethod.get(key).invoke(x.get());
+				} else if(paramClasses[0].isInstance(in)) {
  					keyToMethod.get(key).invoke(x.get(), paramClasses[0].cast(in));
+				}
 			} catch (IllegalArgumentException e) {
 			} catch (IllegalAccessException e) {
 			} catch (InvocationTargetException e) {
