@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,43 +34,48 @@ public class MouseInput extends InputDevice {
 		mouseNameMap = new HashMap<Integer, String>();
 		mouseNameMap.put(MouseEvent.BUTTON1, "Left");
 		mouseNameMap.put(MouseEvent.BUTTON2, "Center");
-		mouseNameMap.put(MouseEvent.BUTTON3, "Right");		
+		mouseNameMap.put(MouseEvent.BUTTON3, "Right");
 		initialize();
 		myInput = input;
 	}
 
 	private PositionObject makePositionObject(MouseEvent e) {
-		return new PositionObject(e.getX() / myComponent.getWidth(), 
-				                  e.getY() / myComponent.getHeight(), 
-				                  e.getWhen());
+		return new PositionObject(e.getX() / myComponent.getWidth(), e.getY()
+				/ myComponent.getHeight(), e.getWhen());
+	}
+
+	private RollObject makeWheelObject(MouseWheelEvent e) {
+		return new RollObject(e.getWhen(), e.getWheelRotation(),
+				e.getUnitsToScroll());
 	}
 
 	private String getClosestWall() {
 		int[] wallDistances = new int[5];
-		String[] walls = {"Left", "Right", "Top", "Bottom"};
+		String[] walls = { "Left", "Right", "Top", "Bottom" };
 		wallDistances[0] = lastPosition.x;
 		wallDistances[1] = myComponent.getWidth() - lastPosition.x;
 		wallDistances[2] = lastPosition.y;
 		wallDistances[3] = myComponent.getHeight() - lastPosition.y;
 		int min = 9999;
 		int minIndex = 0;
-		for(int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			int newMin = Math.min(wallDistances[i], min);
-			if(newMin != min) {
+			if (newMin != min) {
 				minIndex = i;
 			}
 			min = newMin;
 		}
-		
+
 		return walls[minIndex];
 	}
-	
+
 	private String getDirection(Point pt) {
-		String[] walls = {"Right", "Left", "Down", "Up"};
-		int index = (Math.abs(pt.x)-Math.abs(pt.y) > 0)?((int)Math.signum(pt.x) + 1)/2:((int)Math.signum(pt.y) + 1)/2 + 2;
+		String[] walls = { "Right", "Left", "Down", "Up" };
+		int index = (Math.abs(pt.x) - Math.abs(pt.y) > 0) ? ((int) Math
+				.signum(pt.x) + 1) / 2 : ((int) Math.signum(pt.y) + 1) / 2 + 2;
 		return walls[index];
 	}
-	
+
 	/**
 	 * Sets up single mouse listener. implements MouseMotionAdapter with
 	 * mouseMove and MouseDrag
@@ -83,12 +90,20 @@ public class MouseInput extends InputDevice {
 			public void mouseDragged(MouseEvent e) {
 				lastPosition = e.getPoint();
 				notifyInputAction("Mouse_Drag", makePositionObject(e));
-				for(ButtonState downButton : downButtons) {
-					if(!gestureAlreadyNotified && downButton.getPosition() != null && 
-						lastPosition.distance(downButton.getPosition()) > 
-					   	Integer.parseInt(myInput.getSetting("DoubleClickDistanceThreshold"))) {
-						notifyInputAction(downButton.getFullName() + "_Drag" + getDirection(new Point(downButton.getPosition().x - lastPosition.x, 
-								 downButton.getPosition().y - lastPosition.y)), makePositionObject(e));
+				for (ButtonState downButton : downButtons) {
+					if (!gestureAlreadyNotified
+							&& downButton.getPosition() != null
+							&& lastPosition.distance(downButton.getPosition()) > Integer.parseInt(myInput
+									.getSetting("DoubleClickDistanceThreshold"))) {
+						notifyInputAction(
+								downButton.getFullName()
+										+ "_Drag"
+										+ getDirection(new Point(downButton
+												.getPosition().x
+												- lastPosition.x, downButton
+												.getPosition().y
+												- lastPosition.y)),
+								makePositionObject(e));
 						gestureAlreadyNotified = true;
 					}
 				}
@@ -97,7 +112,8 @@ public class MouseInput extends InputDevice {
 
 		myComponent.addMouseListener(new MouseListener() {
 			@Override
-			public void mouseClicked(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {
+			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -106,51 +122,63 @@ public class MouseInput extends InputDevice {
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				if(lastPosition != null) {
+				if (lastPosition != null) {
 					notifyInputAction("Mouse_MoveOut", makePositionObject(e));
-					notifyInputAction("Mouse_MoveOut" + getClosestWall(), makePositionObject(e));
-					for(ButtonState downButton : downButtons) {
-						notifyInputAction(downButton.getFullName() + "_DragOut" + getClosestWall(), makePositionObject(e));
+					notifyInputAction("Mouse_MoveOut" + getClosestWall(),
+							makePositionObject(e));
+					for (ButtonState downButton : downButtons) {
+						notifyInputAction(downButton.getFullName() + "_DragOut"
+								+ getClosestWall(), makePositionObject(e));
 					}
-					if(!downButtons.isEmpty())
-						notifyInputAction("Mouse_DragOut", makePositionObject(e));
+					if (!downButtons.isEmpty())
+						notifyInputAction("Mouse_DragOut",
+								makePositionObject(e));
 				}
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
 				String buttonName = mouseNameMap.get(e.getButton());
-				ButtonState downButton = new ButtonState(myDevice, buttonName, e.getWhen(), inDev, e.getPoint());
+				ButtonState downButton = new ButtonState(myDevice, buttonName,
+						e.getWhen(), inDev, e.getPoint());
 				downButtons.add(downButton);
-				notifyInputAction("Mouse_" + buttonName + "_Down", new AlertObject(e.getWhen()));
+				notifyInputAction("Mouse_" + buttonName + "_Down",
+						new AlertObject(e.getWhen()));
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				String buttonName = mouseNameMap.get(e.getButton());
-				ButtonState temp = new ButtonState(myDevice, buttonName, e.getWhen(), inDev);
-				notifyInputAction(temp.getFullName() + "_Up", new AlertObject(e.getWhen()));
-				notifyInputAction(temp.getFullName() + "_KeyUp", new AlertObject(e.getWhen())); //Legacy Support
-				notifyInputAction(temp.getFullName() + "_Click", new AlertObject(e.getWhen())); //Legacy Support
-				long timeDifference = temp.getTime() - downButtons.remove(downButtons.indexOf(temp)).getTime();
-				
+				ButtonState temp = new ButtonState(myDevice, buttonName, e
+						.getWhen(), inDev);
+				notifyInputAction(temp.getFullName() + "_Up",
+						new AlertObject(e.getWhen()));
+				notifyInputAction(temp.getFullName() + "_KeyUp",
+						new AlertObject(e.getWhen())); // Legacy Support
+				notifyInputAction(temp.getFullName() + "_Click",
+						new AlertObject(e.getWhen())); // Legacy Support
+				long timeDifference = temp.getTime()
+						- downButtons.remove(downButtons.indexOf(temp))
+								.getTime();
+
 				if (timeDifference < Integer.parseInt(myInput
 						.getSetting("ShortClickTimeThreshold"))) {
 					notifyInputAction(temp.getFullName() + "_ShortClick",
-					makePositionObject(e));
+							makePositionObject(e));
 				}
 				if (timeDifference > Integer.parseInt(myInput
 						.getSetting("LongClickTimeThreshold"))) {
 					notifyInputAction(temp.getFullName() + "_LongClick",
-					makePositionObject(e));
+							makePositionObject(e));
 				}
-				if (lastClickPosition != null && lastClickButton.equals(buttonName)
+				if (lastClickPosition != null
+						&& lastClickButton.equals(buttonName)
 						&& lastClickPosition.distance(e.getPoint()) < Integer.parseInt(myInput
 								.getSetting("DoubleClickDistanceThreshold"))
 						&& e.getWhen() - lastClickTime < Integer.parseInt(myInput
 								.getSetting("DoubleClickTimeThreshold"))) {
 					notifyInputAction(temp.getFullName() + "_DoubleClick",
-					makePositionObject(e));
+							makePositionObject(e));
 				}
 				lastClickPosition = e.getPoint();
 				lastClickTime = e.getWhen();
@@ -158,9 +186,29 @@ public class MouseInput extends InputDevice {
 				gestureAlreadyNotified = false;
 			}
 		});
+		myComponent.addMouseWheelListener(new MouseWheelListener() {
+			/**
+			 * This will send two types of signals. It will send
+			 * "Mouse_Wheel_Down" signal if the user scrolls the wheel towards
+			 * him and it will send "Mouse_Wheel_Up" signal if the user scrolls
+			 * the wheel away from him.
+			 */
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent arg0) {
+				if (arg0.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+					if (arg0.getWheelRotation() > 0)
+						notifyInputAction(myDevice + "_Wheel" + "_Down",
+								makeWheelObject(arg0));
+					else
+						notifyInputAction(myDevice + "_Wheel" + "_Up",
+								makeWheelObject(arg0));
+				}
+			}
+		});
+
 	}
-	
-	public void notifyInput(String keyInfo,MouseEvent e){
-		notifyInputAction(keyInfo,makePositionObject(e));
+
+	public void notifyInput(String keyInfo, MouseEvent e) {
+		notifyInputAction(keyInfo, makePositionObject(e));
 	}
 }
