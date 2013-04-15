@@ -105,7 +105,7 @@ public class Input {
 	
 	/**
 	 * Get a setting from our settings resource file objects
-	 * @param String key in
+	 * @param String settingName
 	 * @return String value out
 	 */
 	protected String getSetting(String settingName){
