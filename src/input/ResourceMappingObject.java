@@ -70,20 +70,20 @@ public class ResourceMappingObject {
 	
 	/**
 	 * Override the mappings in your current resource file. **watch out! will remove your current mappings**
-	 * @param resourceKey 
-	 * @param resourceValue
+	 * @param gameBehavior 
+	 * @param inputBehavior
 	 */
-	public void overrideMapping(String resourceValue, String resourceKey) {
+	public void overrideMapping(String gameBehavior, String inputBehaviors) {
 		Iterator<Map.Entry<String, String>> iter = resourceMapping.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry<String, String> KV = iter.next();
-			if ( KV.getValue().equals(resourceKey) ){
+			if ( KV.getValue().equals(gameBehavior) || KV.getKey().equals(gameBehavior)){
 				iter.remove();
 			}
 		}
-		for (String x : parseStr(resourceValue))
-			resourceMapping.put(x, resourceKey);
-	}
+		for (String inputBehavior : parseStr(inputBehaviors))
+			resourceMapping.put(inputBehavior, gameBehavior);
+    }
 	
 	/**
 	 * writes your current mappings to a file specified by path. if it does not exist, we'll make it.

@@ -45,8 +45,8 @@ public class Input {
 	 * @param inputBehavior
 	 * @param gameBehavior
 	 */
-	public void overrideMapping(String inputBehavior, String gameBehavior) {
-		myInputMap.overrideMapping(inputBehavior, gameBehavior);
+	public void overrideMapping(String gameBehavior, String inputBehavior) {
+		myInputMap.overrideMapping(gameBehavior, inputBehavior);
 	}
 	
 	public void replaceMappingResourcePath(String resourcePath) {
@@ -123,7 +123,7 @@ public class Input {
 	 * @param AlertObject object (input state and specifics)
 	 */
 	void actionNotification(String inputBehavior, AlertObject object) {
-		System.out.println(inputBehavior);
+		//System.out.println(inputBehavior);
 		try {
 			if (myInputMap.containsInputBehavior(inputBehavior)) {
 				execute(myInputMap.getGameBehavior(inputBehavior), object);
@@ -143,6 +143,7 @@ public class Input {
 	 * @param in
 	 */
 	private void execute(String gameBehavior, AlertObject in) {
+		//System.out.println(gameBehavior);
 		for (WeakReference x : myWeakReferences) {
 			try {
 				Class[] paramClasses = gameBehaviors.get(gameBehavior).getParameterTypes();

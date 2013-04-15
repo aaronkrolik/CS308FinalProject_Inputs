@@ -1,5 +1,9 @@
 package examples;
 
+import input.AlertObject;
+import input.InputClassTarget;
+import input.InputMethodTarget;
+
 import java.awt.Dimension;
 
 /**
@@ -8,6 +12,7 @@ import java.awt.Dimension;
  * 
  * @author Gavin Ovsak
  */
+@InputClassTarget
 public class Player extends Sprite {
 	private static final int GRAVITY = -280;
 	private static final int JUMP_VELOCITY = 330;
@@ -32,6 +37,26 @@ public class Player extends Sprite {
 		if (minigameSpeed + 6 <= MAX_SPEED) {
 			minigameSpeed += 6;
 		}
+	}
+	
+	@InputMethodTarget(name="cheat")
+	public void cheat(AlertObject alObj) {
+		setCheating(true);
+	}
+	
+	@InputMethodTarget(name="anticheat")
+	public void anticheat(AlertObject alObj) {
+		setAntiCheating(true);
+	}
+	
+	@InputMethodTarget(name="stopcheat")
+	public void stopcheat(AlertObject alObj) {
+		setCheating(false);
+	}
+
+	@InputMethodTarget(name="stopanticheat")
+	public void stopanticheat(AlertObject alObj) {
+		setAntiCheating(false);
 	}
 
 	public void incrementPosition() {

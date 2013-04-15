@@ -41,15 +41,15 @@ public class Game1 {
 		you = new Player(new Pixmap("runningYou.png"),new Pixmap("flyingYou.png"));
 		updateWindowSize();
 		
-		input1 = new Input("examples/Game1MappingsNEW", myCanvas);
+		input1 = new Input("examples/Game1MappingsMode1", myCanvas);
 		input1.addListenerTo(this);
+		input1.addListenerTo(you);
 		
-		//input1.replaceMappingResourcePath("examples/Game1MappingsNEW");
-
-		//Optional
-		//input1.overrideSettings("examples/Settings");
-
-		//input1.setMapping("Mouse_Right_Click", "jump");//"Keyboard_AS_KeyDown"
+		//Optional Modifications:
+		//input1.replaceMappingResourcePath("examples/LegacyGame1Mappings");
+		input1.overrideSettings("examples/Settings");
+		input1.overrideMapping("cheat", "Keyboard_NM_Down|Keyboard_Right_Down");
+		input1.overrideMapping("stopcheat", "Keyboard_N_Up|Keyboard_Right_Up");
 		
 		setUpObstacles();
 	}
@@ -68,26 +68,6 @@ public class Game1 {
 		}
 	}
 
-	@InputMethodTarget(name="cheat")
-	public void cheat(AlertObject alObj) {
-		you.setCheating(true);
-	}
-	
-	@InputMethodTarget(name="anticheat")
-	public void anticheat(AlertObject alObj) {
-			you.setAntiCheating(true);
-	}
-	
-	@InputMethodTarget(name="stopcheat")
-	public void stopcheat(AlertObject alObj) {
-		you.setCheating(false);
-	}
-
-	@InputMethodTarget(name="stopanticheat")
-	public void stopanticheat(AlertObject alObj) {
-		you.setAntiCheating(false);
-	}
-	
 	@InputMethodTarget(name="continue")
 	public void goPastPopup(AlertObject posObj) {
 		popup = false;
@@ -98,26 +78,20 @@ public class Game1 {
 		//System.out.println(posObj.getX() + ", " + posObj.getY());
 	}
 	
-	@InputMethodTarget(name="fight")
-	public void fight(AlertObject posObj){
-		//System.out.println("Here is compound input of S and D");
+	@InputMethodTarget(name = "setMode1")
+	public void setMode1(AlertObject x){
+		input1.replaceMappingResourcePath("examples/Game1MappingsMode1");
 	}
 	
-	@InputMethodTarget(name="defense")
-	public void defense(AlertObject posObj){
-		//System.out.println("Here is continuous input of H");
-	}
-	
-	@InputMethodTarget(name = "changeMapping")
-	public void testingMap(AlertObject x){
-		input1.overrideMapping("Keyboard_M_KeyDown", "jump");
+	@InputMethodTarget(name = "setMode2")
+	public void setMode2(AlertObject x){
+		input1.replaceMappingResourcePath("examples/Game1MappingsMode2");
 	}
 	
 	@InputMethodTarget(name = "restore")
 	public void restore(AlertObject x){
 		input1.restoreMappingDefaults();
 	}
-	
 	
 	/**
 	 * Keeps the local time counter updated
