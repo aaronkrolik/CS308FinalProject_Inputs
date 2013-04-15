@@ -41,8 +41,10 @@ public class Game1 {
 		you = new Player(new Pixmap("runningYou.png"),new Pixmap("flyingYou.png"));
 		updateWindowSize();
 		
-		input1 = new Input("examples/Game1Mapping", myCanvas);
-		
+		input1 = new Input("examples/Game1MappingsNEW", myCanvas);
+		ResourceContainer test = new ResourceContainer("test", "examples/Game1MappingsNEW");
+		test.overrideMapping("jump", "DOSHITnew|FUCKSHITUP");
+
 		input1.addListenerTo(this);
 		
 		//Optional
@@ -105,6 +107,11 @@ public class Game1 {
 	@InputMethodTarget(name="defense")
 	public void defense(AlertObject posObj){
 		//System.out.println("Here is continuous input of H");
+	}
+	
+	@InputMethodTarget(name = "changeMapping")
+	public void testingMap(AlertObject x){
+		input1.overrideMapping("Keyboard_M_KeyDown", "jump");
 	}
 	
 	/**

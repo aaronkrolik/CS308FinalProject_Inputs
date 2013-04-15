@@ -28,9 +28,11 @@ public class Input {
 	private ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); /** still not sure if needed. abk **/
 	private Map<String, String> dynamicMapping = new HashMap<String, String>(); /** not the biggest fan. abk **/
 	
-	private ResourceBundle MAPPINGRESOURCE;
+	private ResourceContainer MAPPINGRESOURCE;
 	private static ResourceBundle SETTINGS;
 	private static ResourceBundle DEFAULT_SETTINGS;
+	
+
 	
 	public Input(String resourcePath, JComponent component) {
 		setMappingResource(resourcePath);
@@ -48,15 +50,15 @@ public class Input {
 	 * @param inputBehavior
 	 * @param gameBehavior
 	 */
-	public void setMapping(String inputBehavior, String gameBehavior) {
-		dynamicMapping.put(inputBehavior, gameBehavior);
+	public void overrideMapping(String inputBehavior, String gameBehavior) {
+		MAPPINGRESOURCE.overrideMapping(inputBehavior, gameBehavior);
 	}
 	/**
 	 * populate RESOURCES with resource file at path
 	 * @param path to resource file
 	 */
 	public void setMappingResource(String path){
-		MAPPINGRESOURCE = ResourceBundle.getBundle(path);
+		MAPPINGRESOURCE = new ResourceContainer("mappings", path);
 	}
 
 	/**
@@ -130,12 +132,11 @@ public class Input {
 	 * @param AlertObject object (input state and specifics)
 	 */
 	void actionNotification(String action, AlertObject object) {
-		//System.out.println(action);
 		try {
 			if(dynamicMapping.containsKey(action)) {
 				execute(dynamicMapping.get(action), object);
 			} else if(MAPPINGRESOURCE.containsKey(action)) {
-				execute(MAPPINGRESOURCE.getString(action), object);
+				execute(MAPPINGRESOURCE.getValue(action), object);
 			}
 		} catch (NullPointerException e) {
 			System.out.println("Null Pointer Exception");

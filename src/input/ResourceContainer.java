@@ -55,6 +55,10 @@ public class ResourceContainer {
 		return resourceMapping.get(key);
 	}
 	
+	public boolean containsKey(String key){
+		return resourceMapping.containsKey(key);
+	}
+	
 	
 	/**
 	 * Sets mappings to those found in the current resource file.
@@ -68,7 +72,7 @@ public class ResourceContainer {
 	 * @param resourceKey 
 	 * @param resourceValue
 	 */
-	public void overrideMapping(String resourceKey, String resourceValue) {
+	public void overrideMapping(String resourceValue, String resourceKey) {
 		Iterator<Map.Entry<String, String>> iter = resourceMapping.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry<String, String> KV = iter.next();
