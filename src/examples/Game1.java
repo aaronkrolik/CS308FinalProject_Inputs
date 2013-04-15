@@ -42,7 +42,7 @@ public class Game1 {
 		updateWindowSize();
 		
 		input1 = new Input("examples/Game1Mapping", myCanvas);
-		ResourceContainer test = new ResourceContainer("test", "examples/Game1MappingsNEW");
+		
 		input1.addListenerTo(this);
 		
 		//Optional

@@ -1,9 +1,13 @@
 package input;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
@@ -64,13 +68,48 @@ public class ResourceContainer {
 		}
 		for (String x : parseStr(resourceValue))
 			resourceMapping.put(x, resourceKey);
-
-		DEBUGprintMap(resourceMapping);
-
 	}
 	
 	/**
-	 * Full disclosure: got this method from stackoverflow
+	 * writes your current mappings to a file specified by path. if it does not exist, we'll make it.
+	 * @param path to file you want. doesn't need to exist
+	 * TODO figure out exception handling
+	 */
+	public void saveMappingsToFile(String path){
+		Map<String, String> temp = new HashMap<String, String>();
+		Iterator<Map.Entry<String, String>> iter = resourceMapping.entrySet().iterator();
+		Map.Entry<String, String> entry;
+		
+		while(iter.hasNext()){
+			entry = iter.next();
+			if(temp.containsKey(entry.getValue())){
+				temp.put(
+							entry.getValue(),
+							temp.get( entry.getValue() ).concat("|" + entry.getKey() )
+						);
+			} else {
+				temp.put(entry.getValue(), entry.getKey());
+			}
+		}
+		
+		
+		
+		try {
+			PrintWriter out = new PrintWriter(new File(path));
+			for (Map.Entry<String,String> ent : temp.entrySet()) {
+	            out.println(ent.getKey() + "\t=\t" + ent.getValue());
+	        }
+
+	        out.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * Full disclosure: got this metho from stackoverflow
 	 * @param resource
 	 * @return
 	 */
@@ -83,7 +122,6 @@ public class ResourceContainer {
 	            	map.put(x, key);
 	            }
 	        }   
-			DEBUGprintMap(map);
 	        return map;
 	 }
 	 
@@ -96,8 +134,7 @@ public class ResourceContainer {
 	 private String[] parseStr(String in){
 		 return in.split("\\|");
 	 }
-	 
-	
+
 	 private void DEBUGprintMap(Map<String, String> foo){
 			Iterator iterator = foo.keySet().iterator();
 	        while (iterator.hasNext()) {
