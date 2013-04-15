@@ -24,20 +24,21 @@ public class Input {
 
 	private List<WeakReference> myWeakReferences = new ArrayList<WeakReference>();
 	private Map<String, Method> keyToMethod = new HashMap<String, Method>();
-	private Map<String, Object> keyToInstance = new HashMap<String, Object>();
-	private ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); /** still not sure if needed. abk **/
-	private Map<String, String> dynamicMapping = new HashMap<String, String>(); /** not the biggest fan. abk **/
+	private ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); 
 	
 	private ResourceContainer MAPPINGRESOURCE;
-	private static ResourceBundle SETTINGS;
+	private static ResourceContainer SETTINGS;
 	private static ResourceBundle DEFAULT_SETTINGS;
 	
 
 	
-	public Input(String resourcePath, JComponent component) {
-		setMappingResource(resourcePath);
-		DEFAULT_SETTINGS = ResourceBundle.getBundle("input/DefaultSettings");
-		
+	public Input(String inputMapResourcePath, JComponent component) {
+		this(inputMapResourcePath, "input/DefaultSettings", component);
+	}
+	
+	public Input(String inputMapResourcePath, String settingsResourcePath, JComponent component) {
+		MAPPINGRESOURCE = new ResourceContainerReversed("mapping", inputMapResourcePath);
+		SETTINGS = new ResourceContainer("settings", settingsResourcePath);
 		inputDevices.add(new KeyboardInput(component, this));
 		inputDevices.add(new MouseInput(component, this));
 	}
@@ -53,13 +54,12 @@ public class Input {
 	public void overrideMapping(String inputBehavior, String gameBehavior) {
 		MAPPINGRESOURCE.overrideMapping(inputBehavior, gameBehavior);
 	}
-	/**
-	 * populate RESOURCES with resource file at path
-	 * @param path to resource file
-	 */
-	public void setMappingResource(String path){
-		MAPPINGRESOURCE = new ResourceContainer("mappings", path);
-	}
+	
+//	/**
+//	 * populate RESOURCES with resource file at path
+//	 * @param path to resource file
+//	 */
+
 	
 	public void restoreMappingDefualts(){
 		MAPPINGRESOURCE.restoreDefualt();
@@ -70,7 +70,7 @@ public class Input {
 	 * @param String resourcePath is the relative location to the settings resource file
 	 */
 	public void overrideSettings(String resourcePath){
-		SETTINGS = ResourceBundle.getBundle(resourcePath);
+		SETTINGS.setResourcePath(resourcePath);
 	}
 
 	/**
@@ -117,15 +117,7 @@ public class Input {
 	 * @return String value out
 	 */
 	protected String getSetting(String in){
-		try{
-			if(SETTINGS != null) {
-				return SETTINGS.getString(in);
-			} else {
-				return DEFAULT_SETTINGS.getString(in);
-			}
-		} catch (MissingResourceException e) {
-			return DEFAULT_SETTINGS.getString(in);
-		}
+		return SETTINGS.getValue(in);
 	}
 
 	/**
@@ -137,15 +129,15 @@ public class Input {
 	 */
 	void actionNotification(String action, AlertObject object) {
 		try {
-			if(dynamicMapping.containsKey(action)) {
-				execute(dynamicMapping.get(action), object);
-			} else if(MAPPINGRESOURCE.containsKey(action)) {
+			if (MAPPINGRESOURCE.containsKey(action)) {
 				execute(MAPPINGRESOURCE.getValue(action), object);
 			}
 		} catch (NullPointerException e) {
 			System.out.println("Null Pointer Exception");
-		} catch (MissingResourceException e){
-			System.out.println("Missing Resource Exception! Resources did not contain: " + action);
+		} catch (MissingResourceException e) {
+			System.out
+					.println("Missing Resource Exception! Resources did not contain: "
+							+ action);
 		}
 	}
 	

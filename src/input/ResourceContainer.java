@@ -35,6 +35,7 @@ public class ResourceContainer {
 	public void setResourcePath(String path){
 		myPath = path;
 		resourceMapping = convertResourceBundleToMap( (myPersistentResources = ResourceBundle.getBundle(path)) );
+		DEBUGprintMap(resourceMapping);
 	}
 
 	public String getName(){
@@ -124,18 +125,16 @@ public class ResourceContainer {
 	}
 	
 	/**
-	 * Full disclosure: got this metho from stackoverflow
+	 * Full disclosure: got this method from stackoverflow
 	 * @param resource
 	 * @return
 	 */
-	 private Map<String, String> convertResourceBundleToMap(ResourceBundle resource) {
+	 protected Map<String, String> convertResourceBundleToMap(ResourceBundle resource) {
 	        Map<String, String> map = new HashMap<String, String>();
 	        Enumeration<String> keys = resource.getKeys();
 	        while (keys.hasMoreElements()) {
 	            String key = keys.nextElement();
-	            for(String x : parseStr(resource.getString(key))){
-	            	map.put(x, key);
-	            }
+	            map.put(key, resource.getString(key));
 	        }   
 	        return map;
 	 }
@@ -146,7 +145,7 @@ public class ResourceContainer {
 	  * @param in
 	  * @return parsed string
 	  */
-	 private String[] parseStr(String in){
+	 protected String[] parseStr(String in){
 		 return in.split("\\|");
 	 }
 
