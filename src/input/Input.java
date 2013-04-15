@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
 
@@ -25,20 +24,16 @@ public class Input {
 	private List<WeakReference> myWeakReferences = new ArrayList<WeakReference>();
 	private Map<String, Method> keyToMethod = new HashMap<String, Method>();
 	private ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); 
-	
-	private ResourceContainer MAPPINGRESOURCE;
-	private static ResourceContainer SETTINGS;
-	private static ResourceBundle DEFAULT_SETTINGS;
-	
-
+	private ResourceContainer myInputMap;
+	private ResourceContainer mySettings;
 	
 	public Input(String inputMapResourcePath, JComponent component) {
 		this(inputMapResourcePath, "input/DefaultSettings", component);
 	}
 	
 	public Input(String inputMapResourcePath, String settingsResourcePath, JComponent component) {
-		MAPPINGRESOURCE = new ResourceContainerReversed("mapping", inputMapResourcePath);
-		SETTINGS = new ResourceContainer("settings", settingsResourcePath);
+		myInputMap = new ResourceContainerReversed("mapping", inputMapResourcePath);
+		mySettings = new ResourceContainer("settings", settingsResourcePath);
 		inputDevices.add(new KeyboardInput(component, this));
 		inputDevices.add(new MouseInput(component, this));
 	}
@@ -52,17 +47,11 @@ public class Input {
 	 * @param gameBehavior
 	 */
 	public void overrideMapping(String inputBehavior, String gameBehavior) {
-		MAPPINGRESOURCE.overrideMapping(inputBehavior, gameBehavior);
+		myInputMap.overrideMapping(inputBehavior, gameBehavior);
 	}
 	
-//	/**
-//	 * populate RESOURCES with resource file at path
-//	 * @param path to resource file
-//	 */
-
-	
 	public void restoreMappingDefualts(){
-		MAPPINGRESOURCE.restoreDefualt();
+		myInputMap.restoreDefualt();
 	}
 
 	/**
@@ -70,7 +59,7 @@ public class Input {
 	 * @param String resourcePath is the relative location to the settings resource file
 	 */
 	public void overrideSettings(String resourcePath){
-		SETTINGS.setResourcePath(resourcePath);
+		mySettings.setResourcePath(resourcePath);
 	}
 
 	/**
@@ -117,7 +106,7 @@ public class Input {
 	 * @return String value out
 	 */
 	protected String getSetting(String in){
-		return SETTINGS.getValue(in);
+		return mySettings.getValue(in);
 	}
 
 	/**
@@ -129,8 +118,8 @@ public class Input {
 	 */
 	void actionNotification(String action, AlertObject object) {
 		try {
-			if (MAPPINGRESOURCE.containsKey(action)) {
-				execute(MAPPINGRESOURCE.getValue(action), object);
+			if (myInputMap.containsKey(action)) {
+				execute(myInputMap.getValue(action), object);
 			}
 		} catch (NullPointerException e) {
 			System.out.println("Null Pointer Exception");
