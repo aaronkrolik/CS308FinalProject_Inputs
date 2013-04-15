@@ -28,7 +28,7 @@ public class Game1 {
 	public static final int CAR = 3;
 	public static final int TOTAL = 4;
 	private Player jones;
-	private Player you;
+	private PlayerSuperHero you;
 	private double time;
 	private Dimension windowSize;
 	private boolean popup = true;
@@ -39,7 +39,7 @@ public class Game1 {
 	public Game1(Canvas canvas){
 		myCanvas = canvas;
 		jones = new Player(new Pixmap("runningJones.png"),new Pixmap("flyingJones.png"));
-		you = new Player(new Pixmap("runningYou.png"),new Pixmap("flyingYou.png"));
+		you = new PlayerSuperHero(new Pixmap("runningYou.png"),new Pixmap("flyingYou.png"));
 		updateWindowSize();
 		
 		input1 = new Input("examples/Game1MappingsMode1", myCanvas);
