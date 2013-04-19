@@ -11,13 +11,14 @@ public class PlayerSuperHero extends Player{
 		super(firstImage, secondImage);
 	}
 	
-	@InputMethodTarget(name="speedup")
+	@Override
+	@InputMethodTarget(name="playerspeedup")
 	public void speedUp(AlertObject alObj){
 		changeMinigameSpeed(20);
 	}
 	
-	@InputMethodTarget(name="slowdown")
 	@Override
+	@InputMethodTarget(name="playerslowdown")
 	public void slowDown() {
 		changeMinigameSpeed(-5);
 	}

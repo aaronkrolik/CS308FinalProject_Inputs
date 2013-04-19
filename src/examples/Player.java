@@ -22,6 +22,7 @@ public class Player extends Sprite {
 	private boolean isCheating = false;
 	private boolean isAntiCheating = false;
 
+	private int playerPositionY = 0;
 	private double minigamePosition = 0;
 	private double minigameSpeed = 0;
 	private double minigameTimeOfJump = -100;
@@ -58,6 +59,20 @@ public class Player extends Sprite {
 	public void stopanticheat(AlertObject alObj) {
 		setAntiCheating(false);
 	}
+	
+	@InputMethodTarget(name="playerup")
+	public void LiftUp(AlertObject alObj){
+		if(playerPositionY >= 0)
+			playerPositionY --;
+		System.out.println(playerPositionY);
+	}
+	
+	@InputMethodTarget(name="playerdown")
+	public void PutDown(AlertObject alObj){
+		if(playerPositionY <= 300)
+			playerPositionY ++;
+		System.out.println(playerPositionY);
+	}
 
 	public void incrementPosition() {
 		minigamePosition += minigameSpeed;
@@ -70,16 +85,17 @@ public class Player extends Sprite {
 		}
 	}
 	
-	@InputMethodTarget(name="slowdown")
 	public void slowDown() {
 		if (minigameSpeed > 10) {
 			minigameSpeed -= 10;
 		}
 	}
 	
+	public void speedUp(AlertObject alObj){
+		changeMinigameSpeed(20);
+	}
 	
-	
-	protected void changeMinigameSpeed(int in){
+	public void changeMinigameSpeed(int in){
 		minigameSpeed += in;
 	}
 
@@ -107,11 +123,11 @@ public class Player extends Sprite {
 		if (isCheating) {
 			setView(flyingImage);
 			setSize(50, 100);
-			setCenter(150 + (int) (minigamePosition - cameraPosition), 200);
+			setCenter(150 + (int) (minigamePosition - cameraPosition), 100);
 		} else {
 			setCenter(
 					150 + (int) (minigamePosition - cameraPosition),
-					400 - Math.max(0, (GRAVITY * jumpTime * jumpTime
+					400 - Math.max(playerPositionY, (GRAVITY * jumpTime * jumpTime
 							* jumpTime + JUMP_VELOCITY * jumpTime)));
 			if (getBottom() > 440) {
 				setView(runningImage);
