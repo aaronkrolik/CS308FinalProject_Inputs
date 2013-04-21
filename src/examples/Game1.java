@@ -42,19 +42,7 @@ public class Game1 {
 		you = new PlayerSuperHero(new Pixmap("runningYou.png"),new Pixmap("flyingYou.png"));
 		updateWindowSize();
 		
-		input1 = new Input("examples/Game1MappingsMode1", myCanvas) {
-			@Override
-			protected void execute(String gameBehavior, AlertObject in) {
-				super.execute(gameBehavior, in);
-				System.out.println(gameBehavior);
-			}
-			
-			@Override
-			protected void actionNotification(String inputBehavior, AlertObject object) {
-				super.actionNotification(inputBehavior, object);
-				System.out.println(inputBehavior);
-			}
-		};
+		input1 = new Input("examples/Game1MappingsMode1", myCanvas);
 		input1.addListenerTo(this);
 		input1.addListenerTo(you);
 		
