@@ -23,6 +23,7 @@ public class Input {
 
 	private List<WeakReference> myWeakReferences = new ArrayList<WeakReference>();
 	private Map<String, Method> gameBehaviors = new HashMap<String, Method>();
+	private Map<String, Class> gameParameters = new HashMap<String, Class>();
 	private ArrayList<InputDevice> inputDevices = new ArrayList<InputDevice>(); 
 	private ResourceMappingObject myInputMap;
 	private ResourceBundle myDefaultSettings;
@@ -82,7 +83,15 @@ public class Input {
 				for (Method method : inputClass.getMethods()) {
 					Annotation annotation = method.getAnnotation(InputMethodTarget.class);
 					if (annotation instanceof InputMethodTarget) {
-						gameBehaviors.put(((InputMethodTarget) annotation).name(),method);
+						String methodName = ((InputMethodTarget) annotation).name();
+						gameBehaviors.put(methodName,method);
+						Class[] paramClasses = method.getParameterTypes();
+						if(paramClasses.length == 0) {
+							gameParameters.put(methodName, null);
+						} else {
+							gameParameters.put(methodName, paramClasses[0]);
+						}
+						
 					}
 				}
 			}
@@ -122,8 +131,8 @@ public class Input {
 	 * @param String action (key for dynamicMapping)
 	 * @param AlertObject object (input state and specifics)
 	 */
-	void actionNotification(String inputBehavior, AlertObject object) {
-		System.out.println(inputBehavior);
+	protected void actionNotification(String inputBehavior, AlertObject object) {
+		//System.out.println(inputBehavior);
 		try {
 			if (myInputMap.containsInputBehavior(inputBehavior)) {
 				execute(myInputMap.getGameBehavior(inputBehavior), object);
@@ -142,7 +151,7 @@ public class Input {
 	 * @param key
 	 * @param in
 	 */
-	private void execute(String gameBehavior, AlertObject in) {
+	protected void execute(String gameBehavior, AlertObject in) {
 		//System.out.println(gameBehavior);
 		for (WeakReference x : myWeakReferences) {
 			try {

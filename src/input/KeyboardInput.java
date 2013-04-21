@@ -82,22 +82,25 @@ public class KeyboardInput extends InputDevice{
 				notifyInputAction("Keyboard_Any_Up", new AlertObject(e.getWhen()));
 				String keyName = KeyboardMappings.getKeyName(e.getKeyCode());
 				ButtonState temp = new ButtonState(myDevice, keyName, e.getWhen(), inDev);
-				long timeDifference = temp.getTime() - myDownKeys.remove(myDownKeys.indexOf(temp)).getTime();
-				notifyInputAction(temp.getFullName() + "_Up", new AlertObject(e.getWhen()));
-				notifyInputAction(temp.getFullName() + "_KeyUp", new AlertObject(e.getWhen())); //Legacy Support
-				if (timeDifference < Integer.parseInt(myInput.getSetting("ShortClickTimeThreshold")) ) {
-					notifyInputAction(temp.getFullName() + "_ShortClick",
-							new AlertObject(e.getWhen()));
+				int keyIndex;
+				if( (keyIndex = myDownKeys.indexOf(temp)) != -1 ) {
+					long timeDifference = temp.getTime() - myDownKeys.remove(keyIndex).getTime();
+					notifyInputAction(temp.getFullName() + "_Up", new AlertObject(e.getWhen()));
+					notifyInputAction(temp.getFullName() + "_KeyUp", new AlertObject(e.getWhen())); //Legacy Support
+					if (timeDifference < Integer.parseInt(myInput.getSetting("ShortClickTimeThreshold")) ) {
+						notifyInputAction(temp.getFullName() + "_ShortClick",
+								new AlertObject(e.getWhen()));
+					}
+					if (timeDifference >= Integer.parseInt(myInput.getSetting("LongClickTimeThreshold"))) {
+						notifyInputAction(temp.getFullName() + "_LongClick",
+								new AlertObject(e.getWhen()));
+					}
+					if (lastClickKey.equals(keyName) && e.getWhen() - lastClickTime < Integer.parseInt(myInput.getSetting("DoubleClickTimeThreshold"))) {
+						notifyInputAction(temp.getFullName() + "_DoubleClick", new AlertObject(e.getWhen()));
+					}
+					lastClickTime = e.getWhen();
+					lastClickKey = keyName;
 				}
-				if (timeDifference >= Integer.parseInt(myInput.getSetting("LongClickTimeThreshold"))) {
-					notifyInputAction(temp.getFullName() + "_LongClick",
-							new AlertObject(e.getWhen()));
-				}
-				if (lastClickKey.equals(keyName) && e.getWhen() - lastClickTime < Integer.parseInt(myInput.getSetting("DoubleClickTimeThreshold"))) {
-					notifyInputAction(temp.getFullName() + "_DoubleClick", new AlertObject(e.getWhen()));
-				}
-				lastClickTime = e.getWhen();
-				lastClickKey = keyName;
 			}
 
 			@Override

@@ -34,7 +34,7 @@ public class Canvas extends JComponent {
     public static final int NO_KEY_PRESSED = -1;
 
     private Timer myTimer;
-    private Game1 myGame;
+    private Game1 myGame = new Game1(this);
     private int myLastKeyPressed;
     private Point myLastMousePosition;
     boolean mouseDown = false;
@@ -100,7 +100,6 @@ public class Canvas extends JComponent {
                 }
             });
         // start animation
-        myGame = new Game1(this);
         timer.start();
     }
 

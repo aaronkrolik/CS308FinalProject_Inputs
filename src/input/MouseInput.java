@@ -113,6 +113,8 @@ public class MouseInput extends InputDevice {
 		});
 
 		myComponent.addMouseListener(new MouseListener() {
+
+			//Required by the MouseListener Interface but unused
 			@Override
 			public void mouseClicked(MouseEvent e) {
 			}
@@ -145,7 +147,7 @@ public class MouseInput extends InputDevice {
 						e.getWhen(), inDev, e.getPoint());
 				downButtons.add(downButton);
 				notifyInputAction("Mouse_" + buttonName + "_Down",
-						new AlertObject(e.getWhen()));
+						makePositionObject(e));
 			}
 
 			@Override
@@ -154,11 +156,11 @@ public class MouseInput extends InputDevice {
 				ButtonState temp = new ButtonState(myDevice, buttonName, e
 						.getWhen(), inDev);
 				notifyInputAction(temp.getFullName() + "_Up",
-						new AlertObject(e.getWhen()));
+						makePositionObject(e));
 				notifyInputAction(temp.getFullName() + "_KeyUp",
-						new AlertObject(e.getWhen())); // Legacy Support
+						makePositionObject(e)); // Legacy Support
 				notifyInputAction(temp.getFullName() + "_Click",
-						new AlertObject(e.getWhen())); // Legacy Support
+						makePositionObject(e)); // Legacy Support
 				long timeDifference = temp.getTime()
 						- downButtons.remove(downButtons.indexOf(temp))
 								.getTime();
