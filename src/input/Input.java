@@ -40,6 +40,7 @@ public class Input {
 	public Input(String inputMapResourcePath, String overrideSettingsResourcePath, JComponent component) {
 		this(inputMapResourcePath, component);
 		myOverrideSettings = ResourceBundle.getBundle(overrideSettingsResourcePath);
+		sendUpdatedWebButtons();
 	}
 	
 	/**
@@ -49,22 +50,43 @@ public class Input {
 	 */
 	public void overrideMapping(String gameBehavior, String inputBehavior) {
 		myInputMap.overrideMapping(gameBehavior, inputBehavior);
+		sendUpdatedWebButtons();
 	}
 	
 	public void replaceMappingResourcePath(String resourcePath) {
 		myInputMap.setResourcePath(resourcePath);
+		sendUpdatedWebButtons();
 	}
 	
 	public void restoreMappingDefaults(){
 		myInputMap.restoreDefault();
+		sendUpdatedWebButtons();
 	}
-
+	
 	/**
 	 * Override our default input settings
 	 * @param String resourcePath is the relative location to the settings resource file
 	 */
 	public void overrideSettings(String resourcePath){
 		myOverrideSettings = ResourceBundle.getBundle(resourcePath);
+	}
+	
+	private void sendUpdatedWebButtons() {
+		ArrayList<WebButton> webButtons = myInputMap.getWebButtons();
+		for(WebButton webButton : webButtons) {
+			String referenceGameBehavior = (webButton.getUpBehavior().length() != 0)?webButton.getUpBehavior():webButton.getDownBehavior();
+			if(gameBehaviors.containsKey(referenceGameBehavior)) {
+				Class[] paramClasses = gameBehaviors.get(referenceGameBehavior).getParameterTypes();
+				if(paramClasses.length > 0 && paramClasses[0] == PositionObject.class) {
+					webButton.setButtonType("PositionObject");
+				} else if(paramClasses.length > 0 && paramClasses[0] == RollObject.class) {
+					webButton.setButtonType("RollObject");
+				} else {
+					webButton.setButtonType("AlertObject");
+				}
+			}
+		}
+		//send webButtons to the web
 	}
 
 	/**

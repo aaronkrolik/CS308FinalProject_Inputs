@@ -3,6 +3,7 @@ package input;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,9 +21,56 @@ public class ResourceMappingObject {
 	private String myPath;
 	private ResourceBundle myPersistentResources;
 	private Map<String, String> resourceMapping;
+	private ArrayList<WebButton> interpretedButtons = new ArrayList<WebButton>();
+	
+	public void interpretButtons() {
+		interpretedButtons.clear();
+		WebButton newButtonBehaviors = new WebButton();
+		boolean notGrouped = true;
+		for(String inputBehavior : resourceMapping.keySet()) {
+			newButtonBehaviors = new WebButton();
+			notGrouped = true;
+			boolean isUp = inputBehavior.substring(inputBehavior.length()-2, inputBehavior.length()).equals("Up");
+			boolean isDown = inputBehavior.substring(inputBehavior.length()-4, inputBehavior.length()).equals("Down");
+			if(isUp || isDown){
+				String conjugateCommand = isUp?inputBehavior.substring(0, inputBehavior.length()-2)+"Down":inputBehavior.substring(0, inputBehavior.length()-4)+"Up";
+				for(WebButton button : interpretedButtons) {
+					if(button.getDownBehavior().length() == 0 && isDown && button.getUpInputBehaviors().contains(conjugateCommand)) {
+						button.setDownBehavior(resourceMapping.get(inputBehavior));
+						button.setDownInputBehaviors(inputBehavior);
+						notGrouped = false;
+					} else if(button.getUpBehavior().length() == 0 && isUp && button.getDownInputBehaviors().contains(conjugateCommand)) {
+						button.setUpBehavior(resourceMapping.get(inputBehavior));
+						button.setUpInputBehaviors(inputBehavior);
+						notGrouped = false;
+					}
+				}				
+				if(notGrouped) { 
+					if(isDown) {
+						newButtonBehaviors.setDownBehavior(resourceMapping.get(inputBehavior));
+						newButtonBehaviors.setDownInputBehaviors(newButtonBehaviors.getDownInputBehaviors()+inputBehavior);
+					} else {
+						newButtonBehaviors.setUpBehavior(resourceMapping.get(inputBehavior));
+						newButtonBehaviors.setUpInputBehaviors(newButtonBehaviors.getUpInputBehaviors()+inputBehavior);
+					}
+					interpretedButtons.add(newButtonBehaviors);
+				}
+			}
+			else{
+				newButtonBehaviors.setDownBehavior(resourceMapping.get(inputBehavior));
+				newButtonBehaviors.setDownInputBehaviors(newButtonBehaviors.getDownInputBehaviors()+inputBehavior);
+				interpretedButtons.add(newButtonBehaviors);
+			}
+		}
+	}
 	
 	public ResourceMappingObject(String name){
 		myName = name;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ArrayList<WebButton> getWebButtons() {
+		return (ArrayList<WebButton>) interpretedButtons.clone();
 	}
 	
 	public ResourceMappingObject(String name, String path){
@@ -33,6 +81,7 @@ public class ResourceMappingObject {
 	public void setResourcePath(String path){
 		myPath = path;
 		resourceMapping = convertResourceBundleToMap( (myPersistentResources = ResourceBundle.getBundle(path)) );
+        interpretButtons();
 		//DEBUGprintMap(resourceMapping);
 	}
 
@@ -65,6 +114,11 @@ public class ResourceMappingObject {
 	public void restoreDefault(){
 		resourceMapping.clear();
 		resourceMapping = convertResourceBundleToMap(myPersistentResources);
+        interpretButtons();
+	}
+	
+	public void getButtonList() {
+		
 	}
 	
 	/**
@@ -82,6 +136,7 @@ public class ResourceMappingObject {
 		}
 		for (String inputBehavior : parseStr(inputBehaviors))
 			resourceMapping.put(inputBehavior, gameBehavior);
+		interpretButtons();
     }
 	
 	/**
@@ -111,7 +166,7 @@ public class ResourceMappingObject {
 			for (Map.Entry<String,String> ent : temp.entrySet()) {
 	            out.println(ent.getKey() + "\t=\t" + ent.getValue());
 	        }
-
+			
 	        out.close();
 		} catch (FileNotFoundException e) {
 		}
@@ -119,7 +174,7 @@ public class ResourceMappingObject {
 	
 	/**
 	 * Parse string as coming in, change k/v order
-	 * code inspiration form StackOverflow :)
+	 * code inspiration from StackOverflow :)
 	 * @param resource
 	 * @return
 	 */
@@ -128,12 +183,15 @@ public class ResourceMappingObject {
 	        Enumeration<String> keys = resource.getKeys();
 	        while (keys.hasMoreElements()) {
 	            String gameBehavior = keys.nextElement();
-	            for(String inputBehavior : parseStr(resource.getString(gameBehavior))) {
-	 	            map.put(inputBehavior, gameBehavior);
-	            }
-	            String oldInputBehavior = gameBehavior;
-	            String oldGameBehavior = resource.getString(oldInputBehavior);
- 	            map.put(oldInputBehavior, oldGameBehavior);//Legacy support for flipped resource files
+	        	if(resource.getString(gameBehavior).contains("_")) {
+		            for(String inputBehavior : parseStr(resource.getString(gameBehavior))) {
+		 	            map.put(inputBehavior, gameBehavior);
+		            }
+	        	} else {
+		            String oldInputBehavior = gameBehavior;
+		            String oldGameBehavior = resource.getString(oldInputBehavior);
+	 	            map.put(oldInputBehavior, oldGameBehavior);//Legacy support for flipped resource files
+	        	}
 	        }   
 	        return map;
 	 }
