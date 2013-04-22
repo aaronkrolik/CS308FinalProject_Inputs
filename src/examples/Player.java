@@ -62,15 +62,15 @@ public class Player extends Sprite {
 	
 	@InputMethodTarget(name="playerup")
 	public void LiftUp(AlertObject alObj){
-		if(playerPositionY >= 0)
-			playerPositionY --;
+		if(playerPositionY <= 250)
+			playerPositionY = playerPositionY + 50;
 		System.out.println(playerPositionY);
 	}
 	
 	@InputMethodTarget(name="playerdown")
 	public void PutDown(AlertObject alObj){
-		if(playerPositionY <= 300)
-			playerPositionY ++;
+		if(playerPositionY >= 50)
+			playerPositionY = playerPositionY - 50;
 		System.out.println(playerPositionY);
 	}
 

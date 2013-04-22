@@ -33,7 +33,8 @@ public class Input {
 		myInputMap = new ResourceMappingObject("mapping", inputMapResourcePath);
 		myDefaultSettings = ResourceBundle.getBundle("input/DefaultSettings");
 		inputDevices.add(new KeyboardInput(component, this));
-		inputDevices.add(new MouseInput(component, this));
+		inputDevices.add(new MouseInput(component, this));	
+		inputDevices.add(new VoiceInput(component,this));
 	}
 	
 	public Input(String inputMapResourcePath, String overrideSettingsResourcePath, JComponent component) {
