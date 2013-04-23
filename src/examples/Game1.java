@@ -70,8 +70,13 @@ public class Game1 {
 	}
 
 	@InputMethodTarget(name="continue")
-	public void goPastPopup(PositionObject posObj) {
+	public void goPastPopup() {
 		popup = false;
+	}
+	
+	@InputMethodTarget(name="pause")
+	public void pause() {
+		popup = true;
 	}
 	
 	@InputMethodTarget(name="movetest")

@@ -72,8 +72,7 @@ public class VoiceInput extends InputDevice implements Runnable {
 			Result result = myRecognizer.recognize();
 			if (result != null) {
 				String resultText = result.getBestFinalResultNoFiller();
-				//System.out.println("voice is " + resultText);
-				notifyInputAction(myDevice + "_" + resultText,
+				notifyInputAction(myDevice + "_" + resultText.substring(0, 1).toUpperCase() + resultText.substring(1),
 						generateAlertObject());
 			} else {
 				System.out.println("I can't hear what you said.\n");

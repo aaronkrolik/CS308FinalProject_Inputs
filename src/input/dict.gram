@@ -6,4 +6,4 @@
 
 grammar hello;
 
-public <greet> = (jump | cheat | hurry);
+public <greet> = (Fire | Jump | Cheat | Up | Down | Right | Left | Stop | Pause | Fight | Run | Play);
