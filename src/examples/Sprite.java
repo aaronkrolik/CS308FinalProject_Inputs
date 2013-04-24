@@ -185,10 +185,10 @@ public abstract class Sprite {
         return myBounds;
     }
 
-	/**
-	 * Returns true if the given point is within a rectangle representing this
-	 * shape.
-	 */
+    /**
+     * Returns true if the given point is within a rectangle representing this
+     * shape.
+     */
     public boolean intersects (Sprite other) {
         return getBounds().intersects(other.getBounds());
     }
@@ -213,8 +213,7 @@ public abstract class Sprite {
     /**
      * Display this shape on the screen.
      */
-    public void paint (Graphics2D pen)
-    {
+    public void paint (Graphics2D pen) {
         myView.paint(pen, myCenter, mySize);
     }
 

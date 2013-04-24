@@ -1,14 +1,21 @@
+import examples.Canvas;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
-import examples.Canvas;
-
+/**
+ * The constructor of an example game which uses Input
+ * @author Gavin Ovsak
+ */
 public class ExampleRunner {
-	public static final Dimension SIZE = new Dimension(800, 600);
+    public static final Dimension SIZE = new Dimension(800, 600);
     public static final String TITLE = "Race!";
 
+    /**
+     * Construct a frame and start the game.
+     * @param args
+     */
     public static void main(String[] args) {
         JFrame frame = new JFrame(TITLE);
         Canvas display = new Canvas(SIZE, frame);
@@ -18,5 +25,5 @@ public class ExampleRunner {
         frame.pack();
         frame.setVisible(true);
         display.start();
-	}
+    }
 }

@@ -6,15 +6,24 @@ package input;
  *
  */
 public class AlertObject {
-	private long myTime;
-	
-	public AlertObject(long time){
-		myTime = time;
-	}
-	
-	public long getTime(){
-		return myTime;
-	}
+    private long myTime;
+    
+    /**
+     * All objects returned as parameters to game methods
+     * extend alert object and contain the time of the event.
+     * @param time
+     */
+    public AlertObject(long time){
+        myTime = time;
+    }
+    
+    /**
+     * Function returns the time of the event.
+     * @return
+     */
+    public long getTime(){
+        return myTime;
+    }
 }
 
 

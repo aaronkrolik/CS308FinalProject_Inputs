@@ -16,7 +16,7 @@ import javax.imageio.ImageIO;
  * 
  * Note, Java only supports the formats: png, jpg, gif.
  * 
- * @author Robert C. Duvall, Gavin Ovsak
+ * @author Robert C. Duvall
  */
 public class Pixmap {
     // underlying implementation
@@ -45,9 +45,9 @@ public class Pixmap {
      * @param fileName 
      */
     public void setImage (String fileName) {
-    	try {
-			myImage = ImageIO.read(new File("src/examples/" + fileName));
-		} catch (IOException e) {}
+        try {
+            myImage = ImageIO.read(new File("src/examples/" + fileName));
+        } catch (IOException e) {}
         myFileName = fileName;
     }
 

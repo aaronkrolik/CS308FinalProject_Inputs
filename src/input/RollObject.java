@@ -6,15 +6,24 @@ package input;
  * @author Ying Chen 
  */
 public class RollObject extends AlertObject {
-	private int unitsRotated;
+    private int unitsRotated;
 
-	public RollObject(long time, int units) {
-		super(time);
-		unitsRotated = units;
-	}
+    /**
+     * Constructor takes in time of roll event and units of roll.
+     * @param time
+     * @param units
+     */
+    public RollObject(long time, int units) {
+        super(time);
+        unitsRotated = units;
+    }
 
-	public int getUnitsRotated() {
-		return unitsRotated;
-	}
+    /**
+     * Returns the units that the wheel has moved.
+     * @return
+     */
+    public int getUnitsRotated() {
+        return unitsRotated;
+    }
 
 }

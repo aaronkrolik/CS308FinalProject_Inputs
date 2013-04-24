@@ -18,6 +18,13 @@ import javax.swing.SwingUtilities;
 
 import junit.framework.TestCase;
 
+/**
+ * A testing class which implments JUnit testing and manufactured
+ * AWTEvent dispatching to make sure that the API is doing what
+ * it is documented to be doing.
+ * @author Gavin Ovsak
+ *
+ */
 @InputClassTarget
 public class InputTest extends TestCase {
     Input input1;
@@ -30,6 +37,9 @@ public class InputTest extends TestCase {
     KeyEvent testKeyEvent;
     MouseEvent testMouseEvent;
     
+    /**
+     * Constructs an input object which is overridden to report back what input events are being activated.
+     */
     public void setUp(){
         JFrame frame = new JFrame(TITLE);
         myCanvas = new JComponent(){
@@ -114,8 +124,13 @@ public class InputTest extends TestCase {
         keyMap.put(KeyEvent.VK_F12, "F12");
     }
     
+    /**
+     * A convenience method to dispatch events and catch exceptions.
+     * @param event
+     * @param comp
+     */
     private static void dispatchEvent(final AWTEvent event, final Component comp) {
-        if(!SwingUtilities.isEventDispatchThread()) {
+        if (!SwingUtilities.isEventDispatchThread()) {
             try {
                 SwingUtilities.invokeAndWait(new Runnable() {
                     @Override
@@ -129,9 +144,12 @@ public class InputTest extends TestCase {
         }
     }
     
+    /**
+     * A test which goes through all Keyboard keys that are supported by the API and verifies their behavior calling. 
+     */
     public void testIndividualKeys() {
-        for(Integer key : keyMap.keySet()) {
-            char keyChar = (keyMap.get(key).length() == 1)? (char)((int)key):KeyEvent.CHAR_UNDEFINED;
+        for (Integer key : keyMap.keySet()) {
+            char keyChar = (keyMap.get(key).length() == 1)?(char)((int)key):KeyEvent.CHAR_UNDEFINED;
             testKeyEvent = new KeyEvent(myCanvas, KeyEvent.KEY_PRESSED,
                                              System.currentTimeMillis(), 0, key, keyChar);
 
@@ -151,6 +169,9 @@ public class InputTest extends TestCase {
         }
     }
     
+    /**
+     * A test which tries many combinations of keys being held down at the same time over the entire list of possible keys.
+     */
     public void testComboKeys() {
     	
     	KeyEvent releaseLast = null;
@@ -188,6 +209,9 @@ public class InputTest extends TestCase {
         }
     }
     
+    /**
+     * A test which verifies the correct input behavior when any mouse button is used.
+     */
     public void testMouseButtons() {
     	Map<Integer, String> mouseNameMap;
     	mouseNameMap = new HashMap<Integer, String>();
@@ -206,10 +230,10 @@ public class InputTest extends TestCase {
                     System.currentTimeMillis(), key, x, y, 1, false);
 
             dispatchEvent(testMouseEvent, myCanvas);
-            assertTrue(inputBehaviorHistory.contains("Mouse_"+mouseNameMap.get(key)+"_Down"));
-            assertTrue(inputBehaviorHistory.contains("Mouse_"+mouseNameMap.get(key)+"_Up"));
-            assertTrue(inputBehaviorHistory.contains("Mouse_"+mouseNameMap.get(key)+"_Click"));
-            assertTrue(inputBehaviorHistory.contains("Mouse_"+mouseNameMap.get(key)+"_ShortClick"));
+            assertTrue(inputBehaviorHistory.contains("Mouse_" + mouseNameMap.get(key)+"_Down"));
+            assertTrue(inputBehaviorHistory.contains("Mouse_" + mouseNameMap.get(key)+"_Up"));
+            assertTrue(inputBehaviorHistory.contains("Mouse_" + mouseNameMap.get(key)+"_Click"));
+            assertTrue(inputBehaviorHistory.contains("Mouse_" + mouseNameMap.get(key)+"_ShortClick"));
             
 			testMouseEvent = new MouseEvent(myCanvas, MouseEvent.MOUSE_PRESSED,
 			        System.currentTimeMillis(), key, x, y, 1, false);
@@ -219,7 +243,7 @@ public class InputTest extends TestCase {
 			System.currentTimeMillis(), key, x, y, 1, false);
 			
 			dispatchEvent(testMouseEvent, myCanvas);
-            assertTrue(inputBehaviorHistory.contains("Mouse_"+mouseNameMap.get(key)+"_DoubleClick"));
+            assertTrue(inputBehaviorHistory.contains("Mouse_" + mouseNameMap.get(key)+"_DoubleClick"));
 
             inputBehaviorHistory.clear();
         }
